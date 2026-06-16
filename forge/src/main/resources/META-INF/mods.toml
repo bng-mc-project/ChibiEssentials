@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+
+[[mods]]
+modId = "chibi_essentials"
+version = "${version}"
+displayName = "Chibi Essentials"
+authors = "Chibi Essentials Team"
+description = "Server-side essentials commands for Forge"
+
+[[dependencies.chibi_essentials]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "SERVER"
+
+[[dependencies.chibi_essentials]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "SERVER"
+
+[[dependencies.chibi_essentials]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.2.14,)"
+ordering = "AFTER"
+side = "SERVER"

@@ -1,0 +1,33 @@
+{
+  "homes": {
+    "defaultMax": 1,
+    "warmup": 3,
+    "cooldown": 5
+  },
+  "back": {
+    "maxHistory": 5,
+    "warmup": 0,
+    "cooldown": 30,
+    "onDeathOnly": false
+  },
+  "spawn": {
+    "warmup": 3,
+    "cooldown": 5
+  },
+  "warp": {
+    "warmup": 3,
+    "cooldown": 5
+  },
+  "tpa": {
+    "warmup": 3,
+    "cooldown": 10,
+    "requestTimeoutSeconds": 120
+  },
+  "messages": {
+    "format": "&7[&b{sender}&7] &f{message}"
+  },
+  "vanish": {
+    "hideFromTab": true,
+    "hideChat": false
+  }
+}

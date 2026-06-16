@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+**/build/
+**/bin/
+out/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Logs and runtime
+logs/
+*.log
+hs_err_pid*
+replay_pid*
+
+# Loom / Architectury run dirs
+run/
+fabric/run/
+forge/run/
+common/run/
+
+# OS files
+.DS_Store
+Thumbs.db
