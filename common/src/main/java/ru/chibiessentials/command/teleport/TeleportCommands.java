@@ -29,6 +29,8 @@ public final class TeleportCommands {
         dispatcher.register(Commands.literal("setspawn")
                 .requires(ChibiPermissions.require(PermissionNodes.SETSPAWN, 2))
                 .executes(ctx -> setSpawn(ctx.getSource().getPlayerOrException())));
+
+        TpposCommands.register(dispatcher);
     }
 
     public static int back(ServerPlayer player) {

@@ -22,6 +22,7 @@ public final class ForgePermissionRegistration {
         registerBoolean(event, PermissionNodes.SETHOME, 0);
         registerBoolean(event, PermissionNodes.SPAWN, 0);
         registerBoolean(event, PermissionNodes.SETSPAWN, 2);
+        registerBoolean(event, PermissionNodes.TPPOS, 2);
         registerBoolean(event, PermissionNodes.WARP, 0);
         registerBoolean(event, PermissionNodes.WARP_CREATE, 2);
         registerBoolean(event, PermissionNodes.WARP_DELETE, 2);
@@ -47,7 +48,7 @@ public final class ForgePermissionRegistration {
         registerBoolean(event, PermissionNodes.GM_SURVIVAL, 2);
         registerBoolean(event, PermissionNodes.GM_ADVENTURE, 2);
         registerBoolean(event, PermissionNodes.GM_SPECTATOR, 2);
-
+        
         registerMeta(event, PermissionNodes.META_HOME_MAX);
         registerMeta(event, PermissionNodes.META_BACK_MAX);
         registerMeta(event, PermissionNodes.metaCooldown("back"));

@@ -6,6 +6,7 @@ public final class PermissionNodes {
     public static final String SETHOME = "sethome";
     public static final String SPAWN = "spawn";
     public static final String SETSPAWN = "setspawn";
+    public static final String TPPOS = "tppos";
     public static final String WARP = "warp";
     public static final String WARP_CREATE = "warp.create";
     public static final String WARP_DELETE = "warp.delete";

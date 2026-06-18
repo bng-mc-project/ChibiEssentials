@@ -86,6 +86,9 @@ config/chibiessentials/
 | `/back` | Вернуться на предыдущую позицию | `chibiessentials.back` |
 | `/spawn` | Телепорт на спавн | `chibiessentials.spawn` |
 | `/setspawn` | Установить точку спавна | `chibiessentials.setspawn` |
+| `/tppos <x> <y> <z> [yaw] [pitch] [world]` | Телепорт на координаты (мгновенно, без warmup) | `chibiessentials.tppos` |
+
+Для `/tppos` мир можно указать как `overworld`, `nether`, `end` или `namespace:id` (например `minecraft:overworld`). Без `world` — текущее измерение.
 
 ### Дома
 
@@ -173,6 +176,7 @@ config/chibiessentials/
 | `chibiessentials.sethome` | `/sethome`, `/delhome` | 0 |
 | `chibiessentials.spawn` | `/spawn` | 0 |
 | `chibiessentials.setspawn` | `/setspawn` | 2 |
+| `chibiessentials.tppos` | `/tppos` | 2 |
 | `chibiessentials.warp` | Доступ ко всем варпам | 0 |
 | `chibiessentials.warp.<имя>` | Доступ к конкретному варпу | 0 |
 | `chibiessentials.warp.create` | `/warp create` | 2 |
