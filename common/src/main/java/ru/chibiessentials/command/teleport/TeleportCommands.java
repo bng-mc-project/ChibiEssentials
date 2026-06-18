@@ -3,7 +3,7 @@ package ru.chibiessentials.command.teleport;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
+import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -35,7 +35,7 @@ public final class TeleportCommands {
         return PlayerDataManager.getOrCreate(player).map(data -> {
             TeleportPos pos = data.popTeleportHistory();
             if (pos == null) {
-                player.displayClientMessage(Component.translatable("chibiessentials.back.empty"), false);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.back.empty"), false);
                 return 0;
             }
             return data.backTeleporter.teleport(player, p -> pos).runCommand(player);
@@ -51,7 +51,7 @@ public final class TeleportCommands {
     public static int setSpawn(ServerPlayer player) {
         if (WorldData.instance == null) return 0;
         WorldData.instance.setSpawn(new TeleportPos(player));
-        player.displayClientMessage(Component.translatable("chibiessentials.spawn.set"), false);
+        player.displayClientMessage(ChibiLang.get("chibiessentials.spawn.set"), false);
         return 1;
     }
 

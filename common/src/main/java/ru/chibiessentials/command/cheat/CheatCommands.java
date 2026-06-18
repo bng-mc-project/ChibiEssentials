@@ -5,6 +5,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -52,7 +53,7 @@ public final class CheatCommands {
             boolean enabled = !data.isFly();
             data.setFly(enabled);
             applyFly(target, enabled);
-            executor.displayClientMessage(Component.translatable(enabled ? "chibiessentials.fly.on" : "chibiessentials.fly.off", target.getDisplayName()), false);
+            executor.displayClientMessage(ChibiLang.get(enabled ? "chibiessentials.fly.on" : "chibiessentials.fly.off", target.getDisplayName()), false);
             return 1;
         }).orElse(0);
     }
@@ -61,8 +62,7 @@ public final class CheatCommands {
         return PlayerDataManager.getOrCreate(target).map(data -> {
             boolean enabled = !data.isGod();
             data.setGod(enabled);
-            applyGod(target, enabled);
-            executor.displayClientMessage(Component.translatable(enabled ? "chibiessentials.god.on" : "chibiessentials.god.off", target.getDisplayName()), false);
+            executor.displayClientMessage(ChibiLang.get(enabled ? "chibiessentials.god.on" : "chibiessentials.god.off", target.getDisplayName()), false);
             return 1;
         }).orElse(0);
     }
@@ -74,7 +74,7 @@ public final class CheatCommands {
         food.setSaturation(20f);
         target.clearFire();
         target.getActiveEffects().stream().map(MobEffectInstance::getEffect).forEach(target::removeEffect);
-        target.displayClientMessage(Component.translatable("chibiessentials.heal.done"), false);
+        target.displayClientMessage(ChibiLang.get("chibiessentials.heal.done"), false);
         return 1;
     }
 
@@ -95,22 +95,15 @@ public final class CheatCommands {
     }
 
     public static void applyFly(ServerPlayer player, boolean enabled) {
-        player.getAbilities().mayfly = enabled;
-        if (!enabled) {
+        boolean allowFly = enabled || player.isCreative() || player.isSpectator();
+        player.getAbilities().mayfly = allowFly;
+        if (!allowFly) {
             player.getAbilities().flying = false;
         }
         player.onUpdateAbilities();
     }
 
-    public static void applyGod(ServerPlayer player, boolean enabled) {
-        player.getAbilities().invulnerable = enabled;
-        player.onUpdateAbilities();
-    }
-
     public static void reapplyStates(ServerPlayer player) {
-        PlayerDataManager.getOrCreate(player).ifPresent(data -> {
-            applyFly(player, data.isFly());
-            applyGod(player, data.isGod());
-        });
+        PlayerDataManager.getOrCreate(player).ifPresent(data -> applyFly(player, data.isFly()));
     }
 }

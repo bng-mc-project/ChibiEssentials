@@ -3,8 +3,8 @@ package ru.chibiessentials.command.admin;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import ru.chibiessentials.config.ChibiConfig;
+import ru.chibiessentials.config.ChibiLang;
 import ru.chibiessentials.permission.ChibiPermissions;
 import ru.chibiessentials.permission.PermissionNodes;
 
@@ -27,7 +27,7 @@ public final class AdminCommands {
 
     private static int reload(CommandSourceStack source) {
         ChibiConfig.reload();
-        source.sendSuccess(() -> Component.translatable("chibiessentials.reload.done"), true);
+        source.sendSuccess(() -> ChibiLang.get("chibiessentials.reload.done"), true);
         return 1;
     }
 }

@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.Component;
+import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import ru.chibiessentials.permission.ChibiPermissions;
@@ -40,7 +40,7 @@ public final class GamemodeCommands {
         GameType type = GameType.byId(mode);
         String node = permissionFor(type);
         if (!ChibiPermissions.has(source, node, 2)) {
-            source.sendFailure(Component.translatable("chibiessentials.no_permission"));
+            source.sendFailure(ChibiLang.get("chibiessentials.no_permission"));
             return 0;
         }
         return apply(target, type);
@@ -48,7 +48,7 @@ public final class GamemodeCommands {
 
     private static int apply(ServerPlayer target, GameType type) {
         target.setGameMode(type);
-        target.displayClientMessage(Component.translatable("chibiessentials.gamemode.set", type.getName()), false);
+        target.displayClientMessage(ChibiLang.get("chibiessentials.gamemode.set", type.getName()), false);
         return 1;
     }
 

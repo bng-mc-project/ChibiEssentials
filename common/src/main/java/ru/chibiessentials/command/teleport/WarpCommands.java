@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.network.chat.Component;
+import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.server.level.ServerPlayer;
 import ru.chibiessentials.data.PlayerDataManager;
 import ru.chibiessentials.data.WorldData;
@@ -44,12 +44,12 @@ public final class WarpCommands {
         String key = WorldData.normalizeWarpName(name);
         TeleportPos pos = WorldData.instance.getWarp(key);
         if (pos == null) {
-            player.displayClientMessage(Component.translatable("chibiessentials.warp.not_found", key), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.warp.not_found", key), false);
             return 0;
         }
         if (!ChibiPermissions.has(player, PermissionNodes.WARP, 0)
                 && !ChibiPermissions.has(player, PermissionNodes.warpNode(key), 0)) {
-            player.displayClientMessage(Component.translatable("chibiessentials.no_permission"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.no_permission"), false);
             return 0;
         }
         return PlayerDataManager.getOrCreate(player)
@@ -60,13 +60,13 @@ public final class WarpCommands {
     public static int create(ServerPlayer player, String name) {
         if (WorldData.instance == null) return 0;
         if (!WorldData.isValidWarpName(name)) {
-            player.displayClientMessage(Component.translatable("chibiessentials.warp.invalid_name"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.warp.invalid_name"), false);
             return 0;
         }
         String key = WorldData.normalizeWarpName(name);
         boolean existed = WorldData.instance.getWarp(key) != null;
         WorldData.instance.addWarp(key, new TeleportPos(player));
-        player.displayClientMessage(Component.translatable(existed ? "chibiessentials.warp.updated" : "chibiessentials.warp.created", key), false);
+        player.displayClientMessage(ChibiLang.get(existed ? "chibiessentials.warp.updated" : "chibiessentials.warp.created", key), false);
         return 1;
     }
 
@@ -74,20 +74,20 @@ public final class WarpCommands {
         if (WorldData.instance == null) return 0;
         String key = WorldData.normalizeWarpName(name);
         if (WorldData.instance.deleteWarp(key)) {
-            player.displayClientMessage(Component.translatable("chibiessentials.warp.deleted", key), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.warp.deleted", key), false);
             return 1;
         }
-        player.displayClientMessage(Component.translatable("chibiessentials.warp.not_found", key), false);
+        player.displayClientMessage(ChibiLang.get("chibiessentials.warp.not_found", key), false);
         return 0;
     }
 
     public static int list(ServerPlayer player) {
         if (WorldData.instance == null) return 0;
         if (WorldData.instance.getWarpNames().isEmpty()) {
-            player.displayClientMessage(Component.translatable("chibiessentials.warp.list_empty"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.warp.list_empty"), false);
             return 1;
         }
-        player.displayClientMessage(Component.translatable("chibiessentials.warp.list", String.join(", ", WorldData.instance.getWarpNames())), false);
+        player.displayClientMessage(ChibiLang.get("chibiessentials.warp.list", String.join(", ", WorldData.instance.getWarpNames())), false);
         return 1;
     }
 }

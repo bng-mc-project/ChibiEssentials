@@ -5,6 +5,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
@@ -48,7 +49,7 @@ public final class MiscCommands {
         if (!receiver.getInventory().add(head)) {
             receiver.drop(head, false);
         }
-        receiver.displayClientMessage(Component.translatable("chibiessentials.head.given", target.getDisplayName()), false);
+        receiver.displayClientMessage(ChibiLang.get("chibiessentials.head.given", target.getDisplayName()), false);
         return 1;
     }
 }

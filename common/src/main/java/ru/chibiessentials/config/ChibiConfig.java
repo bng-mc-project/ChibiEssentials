@@ -20,8 +20,10 @@ public final class ChibiConfig {
     }
 
     public static void reload() {
+        migrateOldConfig();
         Path path = getConfigPath();
         try {
+            Files.createDirectories(getConfigDir());
             if (Files.exists(path)) {
                 try (Reader reader = Files.newBufferedReader(path)) {
                     ConfigData loaded = GSON.fromJson(reader, ConfigData.class);
@@ -30,8 +32,7 @@ public final class ChibiConfig {
                     }
                 }
             } else {
-                Files.createDirectories(path.getParent());
-                try (var stream = ChibiConfig.class.getResourceAsStream("/chibiessentials.default.json")) {
+                try (var stream = ChibiConfig.class.getResourceAsStream("/chibiessentials/config.default.json")) {
                     if (stream != null) {
                         ConfigData loaded = GSON.fromJson(new java.io.InputStreamReader(stream), ConfigData.class);
                         if (loaded != null) {
@@ -41,6 +42,7 @@ public final class ChibiConfig {
                 }
                 save();
             }
+            ChibiLang.load();
         } catch (IOException e) {
             ChibiEssentials.LOGGER.error("Failed to load config", e);
         }
@@ -54,8 +56,29 @@ public final class ChibiConfig {
         }
     }
 
+    public static Path getConfigDir() {
+        return Platform.getConfigFolder().resolve("chibiessentials");
+    }
+
     public static Path getConfigPath() {
-        return Platform.getConfigFolder().resolve("chibiessentials.json");
+        return getConfigDir().resolve("config.json");
+    }
+
+    private static void migrateOldConfig() {
+        Path oldPath = Platform.getConfigFolder().resolve("chibiessentials.json");
+        Path newPath = getConfigPath();
+        if (Files.exists(oldPath) && !Files.exists(newPath)) {
+            try {
+                Files.createDirectories(getConfigDir());
+                Files.move(oldPath, newPath);
+            } catch (IOException e) {
+                ChibiEssentials.LOGGER.error("Failed to migrate config", e);
+            }
+        }
+    }
+
+    public static String language() {
+        return data.language != null && !data.language.isBlank() ? data.language : "en_us";
     }
 
     public static HomesConfig homes() { return data.homes; }
@@ -67,6 +90,7 @@ public final class ChibiConfig {
     public static VanishConfig vanish() { return data.vanish; }
 
     public static final class ConfigData {
+        public String language = "en_us";
         public HomesConfig homes = new HomesConfig();
         public BackConfig back = new BackConfig();
         public TimedConfig spawn = new TimedConfig(3, 5);

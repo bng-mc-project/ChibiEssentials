@@ -9,6 +9,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.*;
 import net.minecraft.server.level.ServerPlayer;
 import ru.chibiessentials.config.ChibiConfig;
+import ru.chibiessentials.config.ChibiLang;
 import ru.chibiessentials.data.PlayerData;
 import ru.chibiessentials.data.PlayerDataManager;
 import ru.chibiessentials.permission.ChibiPermissions;
@@ -91,7 +92,7 @@ public final class TpaCommands {
 
     public static int tpa(ServerPlayer player, ServerPlayer target, boolean here) {
         if (player.getUUID().equals(target.getUUID())) {
-            player.displayClientMessage(Component.translatable("chibiessentials.tpa.self"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.self"), false);
             return 0;
         }
 
@@ -100,7 +101,7 @@ public final class TpaCommands {
         if (sourceData == null || targetData == null) return 0;
 
         if (REQUESTS.values().stream().anyMatch(r -> r.source().equals(player.getUUID()) && r.target().equals(target.getUUID()))) {
-            player.displayClientMessage(Component.translatable("chibiessentials.tpa.already_sent"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.already_sent"), false);
             return 0;
         }
 
@@ -111,37 +112,37 @@ public final class TpaCommands {
 
         TpaRequest request = create(player.getUUID(), target.getUUID(), here);
 
-        MutableComponent header = Component.translatable("chibiessentials.tpa.request",
+        MutableComponent header = ChibiLang.get("chibiessentials.tpa.request",
                 (here ? target : player).getDisplayName().copy().withStyle(ChatFormatting.YELLOW),
                 (here ? player : target).getDisplayName().copy().withStyle(ChatFormatting.YELLOW));
         target.sendSystemMessage(header);
 
-        MutableComponent actions = Component.translatable("chibiessentials.tpa.click");
-        actions.append(Component.translatable("chibiessentials.tpa.accept").setStyle(Style.EMPTY
+        MutableComponent actions = ChibiLang.get("chibiessentials.tpa.click");
+        actions.append(ChibiLang.get("chibiessentials.tpa.accept").setStyle(Style.EMPTY
                 .withColor(ChatFormatting.GREEN).withBold(true)
                 .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept " + request.id()))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chibiessentials.tpa.accept.hover")))));
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChibiLang.get("chibiessentials.tpa.accept.hover")))));
         actions.append(Component.literal(" | "));
-        actions.append(Component.translatable("chibiessentials.tpa.deny").setStyle(Style.EMPTY
+        actions.append(ChibiLang.get("chibiessentials.tpa.deny").setStyle(Style.EMPTY
                 .withColor(ChatFormatting.RED).withBold(true)
                 .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpdeny " + request.id()))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chibiessentials.tpa.deny.hover")))));
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ChibiLang.get("chibiessentials.tpa.deny.hover")))));
         target.sendSystemMessage(actions);
 
-        player.displayClientMessage(Component.translatable("chibiessentials.tpa.sent"), false);
+        player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.sent"), false);
         return 1;
     }
 
     public static int tpaccept(ServerPlayer player, String id) {
         TpaRequest request = REQUESTS.get(id);
         if (request == null || !request.target().equals(player.getUUID())) {
-            player.displayClientMessage(Component.translatable("chibiessentials.tpa.invalid"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.invalid"), false);
             return 0;
         }
 
         ServerPlayer sourcePlayer = player.server.getPlayerList().getPlayer(request.source());
         if (sourcePlayer == null) {
-            player.displayClientMessage(Component.translatable("chibiessentials.tpa.offline"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.offline"), false);
             REQUESTS.remove(id);
             return 0;
         }
@@ -156,8 +157,8 @@ public final class TpaCommands {
 
         if (result.isSuccess()) {
             REQUESTS.remove(id);
-            sourcePlayer.displayClientMessage(Component.translatable("chibiessentials.tpa.accepted"), false);
-            player.displayClientMessage(Component.translatable("chibiessentials.tpa.accepted"), false);
+            sourcePlayer.displayClientMessage(ChibiLang.get("chibiessentials.tpa.accepted"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.accepted"), false);
         }
         return result.runCommand(player);
     }
@@ -165,14 +166,14 @@ public final class TpaCommands {
     public static int tpdeny(ServerPlayer player, String id) {
         TpaRequest request = REQUESTS.get(id);
         if (request == null || !request.target().equals(player.getUUID())) {
-            player.displayClientMessage(Component.translatable("chibiessentials.tpa.invalid"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.invalid"), false);
             return 0;
         }
         REQUESTS.remove(id);
-        player.displayClientMessage(Component.translatable("chibiessentials.tpa.denied"), false);
+        player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.denied"), false);
         ServerPlayer source = player.server.getPlayerList().getPlayer(request.source());
         if (source != null) {
-            source.displayClientMessage(Component.translatable("chibiessentials.tpa.denied_source"), false);
+            source.displayClientMessage(ChibiLang.get("chibiessentials.tpa.denied_source"), false);
         }
         return 1;
     }
@@ -180,10 +181,10 @@ public final class TpaCommands {
     public static int tpacancel(ServerPlayer player) {
         boolean removed = REQUESTS.entrySet().removeIf(e -> e.getValue().source().equals(player.getUUID()));
         if (removed) {
-            player.displayClientMessage(Component.translatable("chibiessentials.tpa.cancelled"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.cancelled"), false);
             return 1;
         }
-        player.displayClientMessage(Component.translatable("chibiessentials.tpa.nothing_to_cancel"), false);
+        player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.nothing_to_cancel"), false);
         return 0;
     }
 }

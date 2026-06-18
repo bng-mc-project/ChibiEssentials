@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import ru.chibiessentials.config.ChibiConfig;
+import ru.chibiessentials.config.ChibiLang;
 import ru.chibiessentials.data.PlayerData;
 
 import java.util.HashMap;
@@ -83,7 +84,7 @@ public final class WarmupCooldownTeleporter {
 
         TeleportPos target = positionGetter.apply(player);
         if (target == null) {
-            return TeleportPos.TeleportResult.failed(Component.translatable("chibiessentials.teleport.unknown_destination"));
+            return TeleportPos.TeleportResult.failed(ChibiLang.get("chibiessentials.teleport.unknown_destination"));
         }
 
         TeleportPos currentPos = new TeleportPos(player);
@@ -126,10 +127,10 @@ public final class WarmupCooldownTeleporter {
                 res.runCommand(player);
             } else if (player.position().distanceToSqr(warmup.initialPos) > 0.25) {
                 toRemove.add(playerId);
-                player.displayClientMessage(Component.translatable("chibiessentials.teleport.interrupted").withStyle(ChatFormatting.RED), true);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.teleport.interrupted").withStyle(ChatFormatting.RED), true);
             } else {
                 long seconds = Math.max(1, (warmup.when - now) / 1000L);
-                player.displayClientMessage(Component.translatable("chibiessentials.teleport.warmup", seconds).withStyle(ChatFormatting.YELLOW), true);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.teleport.warmup", seconds).withStyle(ChatFormatting.YELLOW), true);
             }
         }
 
@@ -139,7 +140,7 @@ public final class WarmupCooldownTeleporter {
     public static void cancelWarmup(ServerPlayer player) {
         if (WARMUPS.containsKey(player.getUUID())) {
             PENDING_REMOVALS.add(player.getUUID());
-            player.displayClientMessage(Component.translatable("chibiessentials.teleport.interrupted").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.teleport.interrupted").withStyle(ChatFormatting.RED), true);
         }
     }
 

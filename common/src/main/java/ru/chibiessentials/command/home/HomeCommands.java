@@ -7,7 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.network.chat.Component;
+import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.server.level.ServerPlayer;
 import ru.chibiessentials.data.PlayerData;
 import ru.chibiessentials.data.PlayerDataManager;
@@ -72,21 +72,21 @@ public final class HomeCommands {
                 homeName = resolveHomeName(player, name, maxHomes > 1);
             } catch (IllegalStateException e) {
                 if ("single-home".equals(e.getMessage())) {
-                    player.displayClientMessage(Component.translatable("chibiessentials.home.use_without_name"), false);
+                    player.displayClientMessage(ChibiLang.get("chibiessentials.home.use_without_name"), false);
                 } else {
-                    player.displayClientMessage(Component.translatable("chibiessentials.home.name_required"), false);
+                    player.displayClientMessage(ChibiLang.get("chibiessentials.home.name_required"), false);
                 }
                 return 0;
             }
 
             if (maxHomes > 1 && !data.getHomes().containsKey(homeName) && data.getHomes().size() >= maxHomes) {
-                player.displayClientMessage(Component.translatable("chibiessentials.home.limit", maxHomes), false);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.home.limit", maxHomes), false);
                 return 0;
             }
 
             data.getHomes().put(homeName, new TeleportPos(player));
             data.markDirty();
-            player.displayClientMessage(Component.translatable("chibiessentials.home.set", homeName), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.home.set", homeName), false);
             return 1;
         }).orElse(0);
     }
@@ -99,15 +99,15 @@ public final class HomeCommands {
                 homeName = resolveHomeName(player, name, maxHomes > 1);
             } catch (IllegalStateException e) {
                 if ("single-home".equals(e.getMessage())) {
-                    player.displayClientMessage(Component.translatable("chibiessentials.home.use_without_name"), false);
+                    player.displayClientMessage(ChibiLang.get("chibiessentials.home.use_without_name"), false);
                 } else {
-                    player.displayClientMessage(Component.translatable("chibiessentials.home.name_required"), false);
+                    player.displayClientMessage(ChibiLang.get("chibiessentials.home.name_required"), false);
                 }
                 return 0;
             }
 
             if (!data.getHomes().containsKey(homeName)) {
-                player.displayClientMessage(Component.translatable("chibiessentials.home.not_found", homeName), false);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.home.not_found", homeName), false);
                 return 0;
             }
 
@@ -119,16 +119,16 @@ public final class HomeCommands {
     public static int delHome(ServerPlayer player, String name) {
         return PlayerDataManager.getOrCreate(player).map(data -> {
             if (data.getMaxHomes(player) <= 1) {
-                player.displayClientMessage(Component.translatable("chibiessentials.home.del_not_available"), false);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.home.del_not_available"), false);
                 return 0;
             }
             String homeName = name.toLowerCase(Locale.ROOT);
             if (data.getHomes().remove(homeName) != null) {
                 data.markDirty();
-                player.displayClientMessage(Component.translatable("chibiessentials.home.deleted", homeName), false);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.home.deleted", homeName), false);
                 return 1;
             }
-            player.displayClientMessage(Component.translatable("chibiessentials.home.not_found", homeName), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.home.not_found", homeName), false);
             return 0;
         }).orElse(0);
     }
@@ -136,14 +136,14 @@ public final class HomeCommands {
     public static int listHomes(ServerPlayer player) {
         return PlayerDataManager.getOrCreate(player).map(data -> {
             if (data.getMaxHomes(player) <= 1) {
-                player.displayClientMessage(Component.translatable("chibiessentials.home.list_not_available"), false);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.home.list_not_available"), false);
                 return 0;
             }
             if (data.getHomes().isEmpty()) {
-                player.displayClientMessage(Component.translatable("chibiessentials.home.list_empty"), false);
+                player.displayClientMessage(ChibiLang.get("chibiessentials.home.list_empty"), false);
                 return 1;
             }
-            player.displayClientMessage(Component.translatable("chibiessentials.home.list", String.join(", ", data.getHomes().keySet())), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.home.list", String.join(", ", data.getHomes().keySet())), false);
             return 1;
         }).orElse(0);
     }

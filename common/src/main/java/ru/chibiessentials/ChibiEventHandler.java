@@ -106,6 +106,9 @@ public final class ChibiEventHandler {
                                                                  float amount) {
         if (entity instanceof ServerPlayer player) {
             WarmupCooldownTeleporter.cancelWarmup(player);
+            if (PlayerDataManager.getOrCreate(player).map(data -> data.isGod()).orElse(false)) {
+                return dev.architectury.event.EventResult.interruptFalse();
+            }
         }
         return dev.architectury.event.EventResult.pass();
     }

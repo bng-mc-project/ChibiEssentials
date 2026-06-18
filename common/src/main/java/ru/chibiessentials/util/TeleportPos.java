@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -57,7 +58,7 @@ public final class TeleportPos {
     public TeleportResult teleport(ServerPlayer player) {
         ServerLevel level = player.server.getLevel(dimension);
         if (level == null) {
-            return TeleportResult.failed(Component.translatable("chibiessentials.teleport.dimension_not_found"));
+            return TeleportResult.failed(ChibiLang.get("chibiessentials.teleport.dimension_not_found"));
         }
 
         int xpLevel = player.experienceLevel;
@@ -112,7 +113,7 @@ public final class TeleportPos {
         @Override
         default int runCommand(ServerPlayer player) {
             long seconds = Math.max(1, getCooldownMillis() / 1000L);
-            player.displayClientMessage(Component.translatable("chibiessentials.teleport.cooldown", seconds), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.teleport.cooldown", seconds), false);
             return 0;
         }
 

@@ -6,6 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.server.level.ServerPlayer;
 import ru.chibiessentials.data.PlayerDataManager;
 import ru.chibiessentials.permission.ChibiPermissions;
@@ -40,13 +41,13 @@ public final class MessageCommands {
 
     public static int send(ServerPlayer sender, ServerPlayer target, String message) {
         if (sender.getUUID().equals(target.getUUID())) {
-            sender.displayClientMessage(Component.translatable("chibiessentials.msg.self"), false);
+            sender.displayClientMessage(ChibiLang.get("chibiessentials.msg.self"), false);
             return 0;
         }
 
         Component formatted = MessageUtil.formatPrivateMessage(sender.getGameProfile().getName(), message);
-        sender.displayClientMessage(Component.translatable("chibiessentials.msg.to", target.getDisplayName(), formatted), false);
-        target.displayClientMessage(Component.translatable("chibiessentials.msg.from", sender.getDisplayName(), formatted), false);
+        sender.displayClientMessage(ChibiLang.get("chibiessentials.msg.to", target.getDisplayName(), formatted), false);
+        target.displayClientMessage(ChibiLang.get("chibiessentials.msg.from", sender.getDisplayName(), formatted), false);
 
         PlayerDataManager.getOrCreate(sender).ifPresent(d -> d.setLastMessaged(target.getUUID()));
         PlayerDataManager.getOrCreate(target).ifPresent(d -> d.setLastMessaged(sender.getUUID()));
@@ -56,12 +57,12 @@ public final class MessageCommands {
     public static int reply(ServerPlayer sender, String message) {
         return PlayerDataManager.getOrCreate(sender).map(data -> {
             if (data.getLastMessaged() == null) {
-                sender.displayClientMessage(Component.translatable("chibiessentials.msg.no_reply_target"), false);
+                sender.displayClientMessage(ChibiLang.get("chibiessentials.msg.no_reply_target"), false);
                 return 0;
             }
             ServerPlayer target = sender.server.getPlayerList().getPlayer(data.getLastMessaged());
             if (target == null) {
-                sender.displayClientMessage(Component.translatable("chibiessentials.msg.offline"), false);
+                sender.displayClientMessage(ChibiLang.get("chibiessentials.msg.offline"), false);
                 return 0;
             }
             return send(sender, target, message);

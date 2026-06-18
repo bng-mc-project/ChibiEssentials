@@ -2,6 +2,7 @@ package ru.chibiessentials.vanish;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
+import ru.chibiessentials.config.ChibiLang;
 import ru.chibiessentials.data.PlayerDataManager;
 import ru.chibiessentials.permission.ChibiPermissions;
 import ru.chibiessentials.permission.PermissionNodes;
@@ -27,10 +28,10 @@ public final class VanishHandler {
     public static int toggle(ServerPlayer player) {
         if (isVanished(player)) {
             disable(player);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("chibiessentials.vanish.off"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.vanish.off"), false);
         } else {
             enable(player);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("chibiessentials.vanish.on"), false);
+            player.displayClientMessage(ChibiLang.get("chibiessentials.vanish.on"), false);
         }
         return 1;
     }
