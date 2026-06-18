@@ -3,6 +3,7 @@ package ru.chibiessentials.command;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import ru.chibiessentials.command.admin.AdminCommands;
+import ru.chibiessentials.command.admin.WhoisCommands;
 import ru.chibiessentials.command.cheat.CheatCommands;
 import ru.chibiessentials.command.gamemode.GamemodeCommands;
 import ru.chibiessentials.command.home.HomeCommands;
@@ -27,5 +28,6 @@ public final class ChibiCommands {
         MiscCommands.register(dispatcher);
         GamemodeCommands.register(dispatcher);
         AdminCommands.register(dispatcher);
+        WhoisCommands.register(dispatcher);
     }
 }

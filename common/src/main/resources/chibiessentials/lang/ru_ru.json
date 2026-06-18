@@ -54,5 +54,7 @@
   "chibiessentials.head.given": "Выдана голова %s",
   "chibiessentials.vanish.on": "Вы теперь невидимы.",
   "chibiessentials.vanish.off": "Вы снова видимы.",
-  "chibiessentials.gamemode.set": "Режим игры: %s"
+  "chibiessentials.gamemode.set": "Режим игры: %s",
+  "chibiessentials.whois": "IP игрока %s: %s",
+  "chibiessentials.whois.unavailable": "IP игрока %s недоступен."
 }

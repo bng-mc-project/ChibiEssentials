@@ -54,5 +54,7 @@
   "chibiessentials.head.given": "Given head of %s",
   "chibiessentials.vanish.on": "You are now vanished.",
   "chibiessentials.vanish.off": "You are no longer vanished.",
-  "chibiessentials.gamemode.set": "Game mode set to %s"
+  "chibiessentials.gamemode.set": "Game mode set to %s",
+  "chibiessentials.whois": "IP of %s: %s",
+  "chibiessentials.whois.unavailable": "IP of %s is unavailable."
 }

@@ -2,12 +2,15 @@ package ru.chibiessentials.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dev.architectury.platform.Platform;
 import ru.chibiessentials.ChibiEssentials;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -20,32 +23,86 @@ public final class ChibiConfig {
     }
 
     public static void reload() {
-        migrateOldConfig();
         Path path = getConfigPath();
         try {
             Files.createDirectories(getConfigDir());
             if (Files.exists(path)) {
-                try (Reader reader = Files.newBufferedReader(path)) {
-                    ConfigData loaded = GSON.fromJson(reader, ConfigData.class);
+                String content = Files.readString(path, StandardCharsets.UTF_8);
+                if (isConfigComplete(content)) {
+                    ConfigData loaded = GSON.fromJson(content, ConfigData.class);
                     if (loaded != null) {
                         data = loaded;
                     }
+                } else {
+                    backupConfig(path);
+                    data = loadDefaults();
+                    save();
                 }
             } else {
-                try (var stream = ChibiConfig.class.getResourceAsStream("/chibiessentials/config.default.json")) {
-                    if (stream != null) {
-                        ConfigData loaded = GSON.fromJson(new java.io.InputStreamReader(stream), ConfigData.class);
-                        if (loaded != null) {
-                            data = loaded;
-                        }
-                    }
-                }
+                data = loadDefaults();
                 save();
             }
             ChibiLang.load();
         } catch (IOException e) {
             ChibiEssentials.LOGGER.error("Failed to load config", e);
         }
+    }
+
+    private static ConfigData loadDefaults() throws IOException {
+        try (var stream = ChibiConfig.class.getResourceAsStream("/chibiessentials/config.default.json")) {
+            if (stream != null) {
+                ConfigData loaded = GSON.fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), ConfigData.class);
+                if (loaded != null) {
+                    return loaded;
+                }
+            }
+        }
+        return new ConfigData();
+    }
+
+    private static boolean isConfigComplete(String content) {
+        try {
+            JsonObject root = JsonParser.parseString(content).getAsJsonObject();
+            return hasString(root, "language")
+                    && hasSection(root, "homes", "defaultMax", "warmup", "cooldown")
+                    && hasSection(root, "back", "maxHistory", "warmup", "cooldown", "onDeathOnly")
+                    && hasSection(root, "spawn", "warmup", "cooldown")
+                    && hasSection(root, "warp", "warmup", "cooldown")
+                    && hasSection(root, "tpa", "warmup", "cooldown", "requestTimeoutSeconds")
+                    && hasSection(root, "messages", "format")
+                    && hasSection(root, "vanish", "hideFromTab", "hideChat");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static boolean hasString(JsonObject root, String key) {
+        return root.has(key) && root.get(key).isJsonPrimitive() && root.get(key).getAsJsonPrimitive().isString();
+    }
+
+    private static boolean hasSection(JsonObject root, String section, String... keys) {
+        if (!root.has(section) || !root.get(section).isJsonObject()) {
+            return false;
+        }
+        JsonObject object = root.getAsJsonObject(section);
+        for (String key : keys) {
+            if (!object.has(key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void backupConfig(Path path) throws IOException {
+        Path dir = path.getParent();
+        int index = 1;
+        Path backup;
+        do {
+            backup = dir.resolve("config." + index + ".bkp");
+            index++;
+        } while (Files.exists(backup));
+        Files.move(path, backup);
+        ChibiEssentials.LOGGER.warn("Config is incomplete or invalid, backed up to {} and regenerated", backup.getFileName());
     }
 
     public static void save() throws IOException {
@@ -62,19 +119,6 @@ public final class ChibiConfig {
 
     public static Path getConfigPath() {
         return getConfigDir().resolve("config.json");
-    }
-
-    private static void migrateOldConfig() {
-        Path oldPath = Platform.getConfigFolder().resolve("chibiessentials.json");
-        Path newPath = getConfigPath();
-        if (Files.exists(oldPath) && !Files.exists(newPath)) {
-            try {
-                Files.createDirectories(getConfigDir());
-                Files.move(oldPath, newPath);
-            } catch (IOException e) {
-                ChibiEssentials.LOGGER.error("Failed to migrate config", e);
-            }
-        }
     }
 
     public static String language() {

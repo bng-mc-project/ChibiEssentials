@@ -42,6 +42,7 @@ public final class ForgePermissionRegistration {
         registerBoolean(event, PermissionNodes.GOD, 2);
         registerBoolean(event, PermissionNodes.HEAL, 2);
         registerBoolean(event, PermissionNodes.RELOAD, 2);
+        registerBoolean(event, PermissionNodes.WHOIS, 2);
         registerBoolean(event, PermissionNodes.GM_CREATIVE, 2);
         registerBoolean(event, PermissionNodes.GM_SURVIVAL, 2);
         registerBoolean(event, PermissionNodes.GM_ADVENTURE, 2);

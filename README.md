@@ -30,7 +30,7 @@
 - **Телепорты** — дома, спавн, варпы, `/back` с историей позиций
 - **TPA** — запросы на телепорт с кнопками «Принять / Отклонить»
 - **Личные сообщения** — `/msg`, `/m`, `/reply` с настраиваемым форматом
-- **Админ-команды** — полёт, god, исцеление, vanish, gamemode, invsee, ec, head
+- **Админ-команды** — полёт, god, исцеление, vanish, gamemode, invsee, ec, head, whois
 - **Warmup и cooldown** — задержка перед телепортом и кулдаун после (настраивается в конфиге и через пермишены)
 - **Локализация из конфига** — тексты хранятся на сервере, клиентские lang-файлы не нужны
 - **Пермишены** — интеграция с LuckPerms (Fabric) и Forge Permission API
@@ -39,7 +39,11 @@
 
 ## Конфигурация
 
-При первом запуске создаётся папка:
+При первом запуске создаётся папка `config/chibiessentials/` с дефолтными файлами.
+
+При загрузке проверяется полная структура `config.json`. Если не хватает полей, JSON повреждён или файл пустой:
+- текущий конфиг сохраняется как `config.1.bkp`, `config.2.bkp` и т.д.;
+- записывается новый `config.json` из шаблона мода.
 
 ```
 config/chibiessentials/
@@ -69,7 +73,7 @@ config/chibiessentials/
 
 Перезагрузка: `/chibireload`, `/cereload` или `/essentialsreload`.
 
-Старый файл `config/chibiessentials.json` автоматически переносится в `config/chibiessentials/config.json`.
+Тексты сообщений редактируются в `lang/<язык>.json`. При обновлении мода добавляйте новые ключи в существующие lang-файлы вручную (или скопируйте из jar).
 
 ---
 
@@ -125,8 +129,8 @@ config/chibiessentials/
 
 | Команда | Описание | Пермишен |
 |---------|----------|----------|
-| `/fly [игрок]` | Переключить полёт (survival) | `chibiessentials.fly` |
-| `/god [игрок]` | Переключить неуязвимость (отмена урона) | `chibiessentials.god` |
+| `/fly [игрок]` | Переключить полёт в survival (не влияет на creative/spectator) | `chibiessentials.fly` |
+| `/god [игрок]` | Переключить неуязвимость — отмена урона, без изменения gamemode | `chibiessentials.god` |
 | `/heal [игрок]` | Полное исцеление | `chibiessentials.heal` |
 | `/invsee <игрок>` | Просмотр инвентаря игрока | `chibiessentials.invsee` |
 | `/vanish [игрок]` | Режим невидимости (spectator) | `chibiessentials.vanish` |
@@ -148,6 +152,7 @@ config/chibiessentials/
 
 | Команда | Описание | Пермишен |
 |---------|----------|----------|
+| `/whois <игрок>` | Показать IP игрока (кликабельная ссылка на 2ip.ru) | `chibiessentials.whois` |
 | `/chibireload` | Перезагрузить конфиг и локали | `chibiessentials.reload` |
 | `/cereload` | Алиас reload | `chibiessentials.reload` |
 | `/essentialsreload` | Алиас reload | `chibiessentials.reload` |
@@ -188,6 +193,7 @@ config/chibiessentials/
 | `chibiessentials.invsee` | `/invsee` | 2 |
 | `chibiessentials.vanish` | `/vanish` | 2 |
 | `chibiessentials.vanish.see` | Видеть vanished-игроков | 2 |
+| `chibiessentials.whois` | `/whois` | 2 |
 | `chibiessentials.reload` | Перезагрузка конфига | 2 |
 | `chibiessentials.gamemode.creative` | Creative | 2 |
 | `chibiessentials.gamemode.survival` | Survival | 2 |

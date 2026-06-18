@@ -26,6 +26,7 @@ public final class PermissionNodes {
     public static final String GOD = "god";
     public static final String HEAL = "heal";
     public static final String RELOAD = "reload";
+    public static final String WHOIS = "whois";
     public static final String GM_CREATIVE = "gamemode.creative";
     public static final String GM_SURVIVAL = "gamemode.survival";
     public static final String GM_ADVENTURE = "gamemode.adventure";
