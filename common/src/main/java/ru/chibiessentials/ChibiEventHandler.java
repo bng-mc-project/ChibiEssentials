@@ -37,6 +37,7 @@ public final class ChibiEventHandler {
 
         EntityEvent.LIVING_HURT.register(ChibiEventHandler::livingHurt);
 
+        VanishHandler.clear();
         ChibiPlatformEvents.init();
     }
 
@@ -45,13 +46,13 @@ public final class ChibiEventHandler {
         PlayerDataManager.init(server);
         WorldData.instance = new WorldData(server);
         WorldData.instance.load();
+        VanishHandler.clear();
     }
 
     private static void serverStopped(MinecraftServer server) {
         WorldData.instance = null;
         PlayerDataManager.clear();
         TpaCommands.REQUESTS.clear();
-        VanishHandler.clear();
     }
 
     private static void levelSave(ServerLevel level) {
