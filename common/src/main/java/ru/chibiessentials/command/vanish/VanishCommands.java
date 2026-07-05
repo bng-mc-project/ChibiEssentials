@@ -14,7 +14,7 @@ public final class VanishCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("vanish")
-                .requires(ChibiPermissions.require(PermissionNodes.VANISH, 2))
+                .requires(ChibiPermissions.require(PermissionNodes.VANISH))
                 .executes(ctx -> VanishHandler.toggle(ctx.getSource().getPlayerOrException()))
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> {

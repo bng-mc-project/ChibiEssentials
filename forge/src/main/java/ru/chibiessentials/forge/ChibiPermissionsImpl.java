@@ -34,4 +34,15 @@ public final class ChibiPermissionsImpl {
         }
         return defaultValue;
     }
+
+    public static String platformGetString(ServerPlayer player, String fullNode, String defaultValue) {
+        var node = ForgePermissionRegistration.META_NODES.get(fullNode);
+        if (node != null) {
+            String value = PermissionAPI.getPermission(player, node);
+            if (value != null && !value.isBlank()) {
+                return value;
+            }
+        }
+        return defaultValue;
+    }
 }

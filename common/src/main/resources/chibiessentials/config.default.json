@@ -27,6 +27,11 @@
   "messages": {
     "format": "&7[&b{sender}&7] &f{message}"
   },
+  "chat": {
+    "localRadius": 100,
+    "globalPrefix": "!",
+    "defaultMode": "local"
+  },
   "vanish": {
     "hideFromTab": true,
     "hideChat": false

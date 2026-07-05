@@ -30,7 +30,7 @@ public final class GamemodeCommands {
 
     private static void registerAlias(CommandDispatcher<CommandSourceStack> dispatcher, String literal, GameType type, String node) {
         dispatcher.register(Commands.literal(literal)
-                .requires(ChibiPermissions.require(node, 2))
+                .requires(ChibiPermissions.require(node))
                 .executes(ctx -> apply(ctx.getSource().getPlayerOrException(), type))
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> apply(EntityArgument.getPlayer(ctx, "player"), type))));

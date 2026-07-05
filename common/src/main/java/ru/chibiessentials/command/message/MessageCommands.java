@@ -18,7 +18,7 @@ public final class MessageCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("msg")
-                .requires(ChibiPermissions.require(PermissionNodes.MSG, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.MSG))
                 .then(Commands.argument("target", EntityArgument.player())
                         .then(Commands.argument("message", StringArgumentType.greedyString())
                                 .executes(ctx -> send(ctx.getSource().getPlayerOrException(),
@@ -26,7 +26,7 @@ public final class MessageCommands {
                                         StringArgumentType.getString(ctx, "message"))))));
 
         dispatcher.register(Commands.literal("m")
-                .requires(ChibiPermissions.require(PermissionNodes.MSG, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.MSG))
                 .then(Commands.argument("target", EntityArgument.player())
                         .then(Commands.argument("message", StringArgumentType.greedyString())
                                 .executes(ctx -> send(ctx.getSource().getPlayerOrException(),
@@ -34,7 +34,7 @@ public final class MessageCommands {
                                         StringArgumentType.getString(ctx, "message"))))));
 
         dispatcher.register(Commands.literal("reply")
-                .requires(ChibiPermissions.require(PermissionNodes.REPLY, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.REPLY))
                 .then(Commands.argument("message", StringArgumentType.greedyString())
                         .executes(ctx -> reply(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "message")))));
     }
@@ -45,7 +45,7 @@ public final class MessageCommands {
             return 0;
         }
 
-        Component formatted = MessageUtil.formatPrivateMessage(sender.getGameProfile().getName(), message);
+        Component formatted = MessageUtil.formatPrivateMessage(sender, message);
         sender.displayClientMessage(ChibiLang.get("chibiessentials.msg.to", target.getDisplayName(), formatted), false);
         target.displayClientMessage(ChibiLang.get("chibiessentials.msg.from", sender.getDisplayName(), formatted), false);
 

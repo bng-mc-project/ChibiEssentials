@@ -7,6 +7,7 @@ public final class PermissionNodes {
     public static final String SPAWN = "spawn";
     public static final String SETSPAWN = "setspawn";
     public static final String TPPOS = "tppos";
+    public static final String TPHERE = "tphere";
     public static final String WARP = "warp";
     public static final String WARP_CREATE = "warp.create";
     public static final String WARP_DELETE = "warp.delete";
@@ -15,11 +16,17 @@ public final class PermissionNodes {
     public static final String TPACCEPT = "tpaccept";
     public static final String TPDENY = "tpdeny";
     public static final String TPACANCEL = "tpacancel";
+    public static final String CHAT = "chat";
+    public static final String CHAT_COLOR = "chat.color";
     public static final String MSG = "msg";
     public static final String REPLY = "reply";
     public static final String EC = "ec";
     public static final String EC_OTHERS = "ec.others";
     public static final String HEAD = "head";
+    public static final String HAT = "hat";
+    public static final String SIT = "sit";
+    public static final String FEED = "feed";
+    public static final String WORKBENCH = "workbench";
     public static final String FLY = "fly";
     public static final String INVSEE = "invsee";
     public static final String VANISH = "vanish";
@@ -35,6 +42,9 @@ public final class PermissionNodes {
 
     public static final String META_HOME_MAX = "chibiessentials.home.max";
     public static final String META_BACK_MAX = "chibiessentials.back.max";
+    public static final String META_CHAT_PREFIX = "chibiessentials.chat.prefix";
+    public static final String META_CHAT_SUFFIX = "chibiessentials.chat.suffix";
+    public static final String META_CHAT_NICK = "chibiessentials.chat.nick";
 
     public static String warpNode(String name) {
         return "warp." + name.toLowerCase();

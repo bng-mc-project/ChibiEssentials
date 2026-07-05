@@ -31,29 +31,29 @@ public final class TpaCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tpa")
-                .requires(ChibiPermissions.require(PermissionNodes.TPA, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.TPA))
                 .then(Commands.argument("target", EntityArgument.player())
                         .executes(ctx -> tpa(ctx.getSource().getPlayerOrException(), EntityArgument.getPlayer(ctx, "target"), false))));
 
         dispatcher.register(Commands.literal("tpahere")
-                .requires(ChibiPermissions.require(PermissionNodes.TPA, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.TPA))
                 .then(Commands.argument("target", EntityArgument.player())
                         .executes(ctx -> tpa(ctx.getSource().getPlayerOrException(), EntityArgument.getPlayer(ctx, "target"), true))));
 
         dispatcher.register(Commands.literal("tpaccept")
-                .requires(ChibiPermissions.require(PermissionNodes.TPACCEPT, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.TPACCEPT))
                 .executes(ctx -> tpaccept(ctx.getSource().getPlayerOrException(), findLatestFor(ctx.getSource().getPlayerOrException())))
                 .then(Commands.argument("id", StringArgumentType.string())
                         .executes(ctx -> tpaccept(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "id")))));
 
         dispatcher.register(Commands.literal("tpdeny")
-                .requires(ChibiPermissions.require(PermissionNodes.TPDENY, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.TPDENY))
                 .executes(ctx -> tpdeny(ctx.getSource().getPlayerOrException(), findLatestFor(ctx.getSource().getPlayerOrException())))
                 .then(Commands.argument("id", StringArgumentType.string())
                         .executes(ctx -> tpdeny(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "id")))));
 
         dispatcher.register(Commands.literal("tpacancel")
-                .requires(ChibiPermissions.require(PermissionNodes.TPACANCEL, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.TPACANCEL))
                 .executes(ctx -> tpacancel(ctx.getSource().getPlayerOrException())));
     }
 

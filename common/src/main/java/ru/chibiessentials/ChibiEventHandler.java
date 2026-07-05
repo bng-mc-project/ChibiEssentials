@@ -8,12 +8,15 @@ import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import ru.chibiessentials.chat.ChatHandler;
 import ru.chibiessentials.command.ChibiCommands;
+import ru.chibiessentials.command.teleport.TeleportCommands;
 import ru.chibiessentials.command.cheat.CheatCommands;
 import ru.chibiessentials.command.tpa.TpaCommands;
 import ru.chibiessentials.config.ChibiConfig;
 import ru.chibiessentials.data.PlayerDataManager;
 import ru.chibiessentials.data.WorldData;
+import ru.chibiessentials.util.SitHandler;
 import ru.chibiessentials.util.WarmupCooldownTeleporter;
 import ru.chibiessentials.vanish.VanishHandler;
 
@@ -30,12 +33,14 @@ public final class ChibiEventHandler {
 
         CommandRegistrationEvent.EVENT.register(ChibiEventHandler::registerCommands);
 
+        PlayerEvent.PLAYER_RESPAWN.register(ChibiEventHandler::playerRespawn);
         PlayerEvent.PLAYER_JOIN.register(ChibiEventHandler::playerJoin);
         PlayerEvent.PLAYER_QUIT.register(ChibiEventHandler::playerQuit);
         PlayerEvent.PLAYER_CLONE.register(ChibiEventHandler::playerClone);
         PlayerEvent.CHANGE_DIMENSION.register(ChibiEventHandler::dimensionChange);
 
         EntityEvent.LIVING_HURT.register(ChibiEventHandler::livingHurt);
+        ChatEvent.RECEIVED.register(ChatHandler::onReceived);
 
         VanishHandler.clear();
         ChibiPlatformEvents.init();
@@ -46,6 +51,7 @@ public final class ChibiEventHandler {
         PlayerDataManager.init(server);
         WorldData.instance = new WorldData(server);
         WorldData.instance.load();
+        TeleportCommands.syncLoadedSpawn(server);
         VanishHandler.clear();
     }
 
@@ -70,6 +76,7 @@ public final class ChibiEventHandler {
     private static void playerTick(net.minecraft.world.entity.player.Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             CheatCommands.reapplyStates(serverPlayer);
+            SitHandler.tick(serverPlayer);
         }
     }
 
@@ -77,6 +84,13 @@ public final class ChibiEventHandler {
                                          CommandBuildContext registryAccess,
                                          Commands.CommandSelection selection) {
         ChibiCommands.register(dispatcher);
+    }
+
+    private static void playerRespawn(ServerPlayer player, boolean conqueredEnd) {
+        if (conqueredEnd) {
+            return;
+        }
+        player.server.execute(() -> TeleportCommands.applyRespawnSpawn(player));
     }
 
     private static void playerJoin(ServerPlayer player) {
@@ -87,6 +101,7 @@ public final class ChibiEventHandler {
 
     private static void playerQuit(ServerPlayer player) {
         WarmupCooldownTeleporter.cancelWarmup(player);
+        SitHandler.cleanup(player);
         PlayerDataManager.unload(player);
     }
 
@@ -100,6 +115,7 @@ public final class ChibiEventHandler {
     private static void dimensionChange(ServerPlayer player, net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> oldLevel,
                                         net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> newLevel) {
         WarmupCooldownTeleporter.cancelWarmup(player);
+        SitHandler.cleanup(player);
     }
 
     private static dev.architectury.event.EventResult livingHurt(net.minecraft.world.entity.LivingEntity entity,
@@ -107,6 +123,7 @@ public final class ChibiEventHandler {
                                                                  float amount) {
         if (entity instanceof ServerPlayer player) {
             WarmupCooldownTeleporter.cancelWarmup(player);
+            SitHandler.unsit(player);
             if (PlayerDataManager.getOrCreate(player).map(data -> data.isGod()).orElse(false)) {
                 return dev.architectury.event.EventResult.interruptFalse();
             }

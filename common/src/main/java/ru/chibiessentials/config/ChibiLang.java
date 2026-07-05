@@ -56,6 +56,10 @@ public final class ChibiLang {
         }
     }
 
+    public static String getString(String key) {
+        return strings.getOrDefault(key, key);
+    }
+
     public static MutableComponent get(String key, Object... args) {
         String template = strings.getOrDefault(key, key);
         MutableComponent result = Component.empty();

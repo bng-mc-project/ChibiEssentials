@@ -7,6 +7,7 @@ import ru.chibiessentials.command.admin.WhoisCommands;
 import ru.chibiessentials.command.cheat.CheatCommands;
 import ru.chibiessentials.command.gamemode.GamemodeCommands;
 import ru.chibiessentials.command.home.HomeCommands;
+import ru.chibiessentials.command.chat.ChatCommands;
 import ru.chibiessentials.command.message.MessageCommands;
 import ru.chibiessentials.command.misc.MiscCommands;
 import ru.chibiessentials.command.teleport.TeleportCommands;
@@ -23,6 +24,7 @@ public final class ChibiCommands {
         WarpCommands.register(dispatcher);
         TpaCommands.register(dispatcher);
         MessageCommands.register(dispatcher);
+        ChatCommands.register(dispatcher);
         CheatCommands.register(dispatcher);
         VanishCommands.register(dispatcher);
         MiscCommands.register(dispatcher);

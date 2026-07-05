@@ -18,4 +18,8 @@ public final class ChibiPermissionsImpl {
     public static int platformGetInt(ServerPlayer player, String fullNode, int defaultValue) {
         return Options.get(player, fullNode, defaultValue, Integer::parseInt);
     }
+
+    public static String platformGetString(ServerPlayer player, String fullNode, String defaultValue) {
+        return Options.get(player, fullNode, defaultValue, value -> value);
+    }
 }

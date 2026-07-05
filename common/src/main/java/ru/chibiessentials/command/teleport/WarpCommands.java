@@ -19,16 +19,16 @@ public final class WarpCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("warp")
                 .then(Commands.literal("create")
-                        .requires(ChibiPermissions.require(PermissionNodes.WARP_CREATE, 2))
+                        .requires(ChibiPermissions.require(PermissionNodes.WARP_CREATE))
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .executes(ctx -> create(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "name")))))
                 .then(Commands.literal("delete")
-                        .requires(ChibiPermissions.require(PermissionNodes.WARP_DELETE, 2))
+                        .requires(ChibiPermissions.require(PermissionNodes.WARP_DELETE))
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .suggests((ctx, b) -> SharedSuggestionProvider.suggest(getWarpSuggestions(), b))
                                 .executes(ctx -> delete(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "name")))))
                 .then(Commands.literal("list")
-                        .requires(ChibiPermissions.require(PermissionNodes.WARP_LIST, 0))
+                        .requires(ChibiPermissions.require(PermissionNodes.WARP_LIST))
                         .executes(ctx -> list(ctx.getSource().getPlayerOrException())))
                 .then(Commands.argument("name", StringArgumentType.string())
                         .suggests((ctx, b) -> SharedSuggestionProvider.suggest(getWarpSuggestions(), b))
@@ -47,8 +47,8 @@ public final class WarpCommands {
             player.displayClientMessage(ChibiLang.get("chibiessentials.warp.not_found", key), false);
             return 0;
         }
-        if (!ChibiPermissions.has(player, PermissionNodes.WARP, 0)
-                && !ChibiPermissions.has(player, PermissionNodes.warpNode(key), 0)) {
+        if (!ChibiPermissions.has(player, PermissionNodes.WARP)
+                && !ChibiPermissions.has(player, PermissionNodes.warpNode(key))) {
             player.displayClientMessage(ChibiLang.get("chibiessentials.no_permission"), false);
             return 0;
         }

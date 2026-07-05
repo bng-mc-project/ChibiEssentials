@@ -22,13 +22,13 @@ public final class HomeCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> sethome = Commands.literal("sethome")
-                .requires(ChibiPermissions.require(PermissionNodes.SETHOME, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.SETHOME))
                 .executes(ctx -> setHome(ctx.getSource().getPlayerOrException(), null))
                 .then(Commands.argument("name", StringArgumentType.string())
                         .executes(ctx -> setHome(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "name"))));
 
         LiteralArgumentBuilder<CommandSourceStack> home = Commands.literal("home")
-                .requires(ChibiPermissions.require(PermissionNodes.HOME, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.HOME))
                 .executes(ctx -> home(ctx.getSource().getPlayerOrException(), null))
                 .then(Commands.argument("name", StringArgumentType.string())
                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
@@ -40,12 +40,12 @@ public final class HomeCommands {
         dispatcher.register(home);
 
         dispatcher.register(Commands.literal("delhome")
-                .requires(ChibiPermissions.require(PermissionNodes.SETHOME, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.SETHOME))
                 .then(Commands.argument("name", StringArgumentType.string())
                         .executes(ctx -> delHome(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "name")))));
 
         dispatcher.register(Commands.literal("listhomes")
-                .requires(ChibiPermissions.require(PermissionNodes.HOME, 0))
+                .requires(ChibiPermissions.require(PermissionNodes.HOME))
                 .executes(ctx -> listHomes(ctx.getSource().getPlayerOrException())));
     }
 

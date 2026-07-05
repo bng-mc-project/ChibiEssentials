@@ -12,17 +12,10 @@ public final class AdminCommands {
     private AdminCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        var reload = Commands.literal("chibireload")
-                .requires(ChibiPermissions.require(PermissionNodes.RELOAD, 2))
-                .executes(ctx -> reload(ctx.getSource()));
-
-        dispatcher.register(reload);
-        dispatcher.register(Commands.literal("cereload")
-                .requires(ChibiPermissions.require(PermissionNodes.RELOAD, 2))
-                .executes(ctx -> reload(ctx.getSource())));
-        dispatcher.register(Commands.literal("essentialsreload")
-                .requires(ChibiPermissions.require(PermissionNodes.RELOAD, 2))
-                .executes(ctx -> reload(ctx.getSource())));
+        dispatcher.register(Commands.literal("chibiessentials")
+                .then(Commands.literal("reload")
+                        .requires(ChibiPermissions.require(PermissionNodes.RELOAD))
+                        .executes(ctx -> reload(ctx.getSource()))));
     }
 
     private static int reload(CommandSourceStack source) {

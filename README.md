@@ -68,10 +68,13 @@ config/chibiessentials/
 | `tpa.warmup` / `tpa.cooldown` | Warmup и cooldown после принятия TPA |
 | `tpa.requestTimeoutSeconds` | Время жизни TPA-запроса |
 | `messages.format` | Формат ЛС (`{sender}`, `{message}`, цвета через `&`) |
+| `chat.localRadius` | Радиус локального чата (блоки) |
+| `chat.globalPrefix` | Префикс для принудительного глобального сообщения (например `!`) |
+| `chat.defaultMode` | Режим чата по умолчанию: `local` или `global` |
 | `vanish.hideFromTab` | Скрывать vanished-игроков из таба |
 | `vanish.hideChat` | Скрывать сообщения vanished-игроков в чате |
 
-Перезагрузка: `/chibireload`, `/cereload` или `/essentialsreload`.
+Перезагрузка: `/chibiessentials reload`.
 
 Тексты сообщений редактируются в `lang/<язык>.json`. При обновлении мода добавляйте новые ключи в существующие lang-файлы вручную (или скопируйте из jar).
 
@@ -85,8 +88,9 @@ config/chibiessentials/
 |---------|----------|----------|
 | `/back` | Вернуться на предыдущую позицию | `chibiessentials.back` |
 | `/spawn` | Телепорт на спавн | `chibiessentials.spawn` |
-| `/setspawn` | Установить точку спавна | `chibiessentials.setspawn` |
+| `/setspawn` | Установить точку спавна (также используется при смерти) | `chibiessentials.setspawn` |
 | `/tppos <x> <y> <z> [yaw] [pitch] [world]` | Телепорт на координаты (мгновенно, без warmup) | `chibiessentials.tppos` |
+| `/tphere <игрок>` | Телепортировать игрока к себе (мгновенно) | `chibiessentials.tphere` |
 
 Для `/tppos` мир можно указать как `overworld`, `nether`, `end` или `namespace:id` (например `minecraft:overworld`). Без `world` — текущее измерение.
 
@@ -128,6 +132,28 @@ config/chibiessentials/
 | `/m <игрок> <текст>` | Алиас `/msg` | `chibiessentials.msg` |
 | `/reply <текст>` | Ответ последнему собеседнику | `chibiessentials.reply` |
 
+### Чат
+
+| Команда | Описание | Пермишен |
+|---------|----------|----------|
+| `/g [текст]` | Глобальный режим / отправить в глобальный чат | `chibiessentials.chat` |
+| `/l [текст]` | Локальный режим / отправить в локальный чат | `chibiessentials.chat` |
+| `/global [текст]` | Алиас `/g` | `chibiessentials.chat` |
+| `/local [текст]` | Алиас `/l` | `chibiessentials.chat` |
+
+Обычное сообщение в чате использует выбранный режим (`/g` или `/l`). Префикс из `chat.globalPrefix` (по умолчанию `!`) отправляет сообщение в глобальный чат.
+
+Формат чата настраивается в `lang/<язык>.json`:
+- `chibiessentials.chat.format.global` / `format.local` — шаблон (`{prefix}`, `{suffix}`, `{nick}`, `{player}`, `{message}`, `{world}`)
+- `chibiessentials.chat.prefix.default` / `suffix.default` / `nick.default` — значения по умолчанию
+
+Персональные префикс, суффикс и ник — через мета-пермишены LuckPerms:
+- `chibiessentials.chat.prefix`
+- `chibiessentials.chat.suffix`
+- `chibiessentials.chat.nick`
+
+Цветные коды `&` в тексте сообщения — пермишен `chibiessentials.chat.color`.
+
 ### Читы и утилиты
 
 | Команда | Описание | Пермишен |
@@ -135,10 +161,14 @@ config/chibiessentials/
 | `/fly [игрок]` | Переключить полёт в survival (не влияет на creative/spectator) | `chibiessentials.fly` |
 | `/god [игрок]` | Переключить неуязвимость — отмена урона, без изменения gamemode | `chibiessentials.god` |
 | `/heal [игрок]` | Полное исцеление | `chibiessentials.heal` |
+| `/feed [игрок]` | Восстановить голод и насыщение | `chibiessentials.feed` |
 | `/invsee <игрок>` | Просмотр инвентаря игрока | `chibiessentials.invsee` |
 | `/vanish [игрок]` | Режим невидимости (spectator) | `chibiessentials.vanish` |
 | `/ec [игрок]` | Открыть эндер-сундук | `chibiessentials.ec` / `chibiessentials.ec.others` |
 | `/head <игрок>` | Выдать голову игрока | `chibiessentials.head` |
+| `/hat` | Надеть предмет из руки на голову | `chibiessentials.hat` |
+| `/workbench` | Открыть верстак | `chibiessentials.workbench` |
+| `/sit` | Сесть / встать | `chibiessentials.sit` |
 
 ### Gamemode
 
@@ -156,44 +186,49 @@ config/chibiessentials/
 | Команда | Описание | Пермишен |
 |---------|----------|----------|
 | `/whois <игрок>` | Показать IP игрока (кликабельная ссылка на 2ip.ru) | `chibiessentials.whois` |
-| `/chibireload` | Перезагрузить конфиг и локали | `chibiessentials.reload` |
-| `/cereload` | Алиас reload | `chibiessentials.reload` |
-| `/essentialsreload` | Алиас reload | `chibiessentials.reload` |
+| `/chibiessentials reload` | Перезагрузить конфиг и локали | `chibiessentials.reload` |
 
 ---
 
 ## Пермишены
 
 Все ноды имеют префикс **`chibiessentials.`**.  
-Если пермишен-плагин не установлен, используется fallback по уровню OP (указан в скобках).
+Если пермишен-плагин не установлен, для всех команд используется fallback **OP 2**.
 
 ### Основные
 
 | Пермишен | Описание | OP fallback |
 |----------|----------|-------------|
-| `chibiessentials.back` | `/back` | 0 |
-| `chibiessentials.home` | `/home`, `/listhomes` | 0 |
-| `chibiessentials.sethome` | `/sethome`, `/delhome` | 0 |
-| `chibiessentials.spawn` | `/spawn` | 0 |
+| `chibiessentials.back` | `/back` | 2 |
+| `chibiessentials.home` | `/home`, `/listhomes` | 2 |
+| `chibiessentials.sethome` | `/sethome`, `/delhome` | 2 |
+| `chibiessentials.spawn` | `/spawn` | 2 |
 | `chibiessentials.setspawn` | `/setspawn` | 2 |
 | `chibiessentials.tppos` | `/tppos` | 2 |
-| `chibiessentials.warp` | Доступ ко всем варпам | 0 |
-| `chibiessentials.warp.<имя>` | Доступ к конкретному варпу | 0 |
+| `chibiessentials.tphere` | `/tphere` | 2 |
+| `chibiessentials.warp` | Доступ ко всем варпам | 2 |
+| `chibiessentials.warp.<имя>` | Доступ к конкретному варпу | 2 |
 | `chibiessentials.warp.create` | `/warp create` | 2 |
 | `chibiessentials.warp.delete` | `/warp delete` | 2 |
-| `chibiessentials.warp.list` | `/warp list` | 0 |
-| `chibiessentials.tpa` | `/tpa`, `/tpahere` | 0 |
-| `chibiessentials.tpaccept` | `/tpaccept` | 0 |
-| `chibiessentials.tpdeny` | `/tpdeny` | 0 |
-| `chibiessentials.tpacancel` | `/tpacancel` | 0 |
-| `chibiessentials.msg` | `/msg`, `/m` | 0 |
-| `chibiessentials.reply` | `/reply` | 0 |
-| `chibiessentials.ec` | `/ec` (свой сундук) | 0 |
+| `chibiessentials.warp.list` | `/warp list` | 2 |
+| `chibiessentials.tpa` | `/tpa`, `/tpahere` | 2 |
+| `chibiessentials.tpaccept` | `/tpaccept` | 2 |
+| `chibiessentials.tpdeny` | `/tpdeny` | 2 |
+| `chibiessentials.tpacancel` | `/tpacancel` | 2 |
+| `chibiessentials.msg` | `/msg`, `/m` | 2 |
+| `chibiessentials.reply` | `/reply` | 2 |
+| `chibiessentials.chat` | Публичный чат | 2 |
+| `chibiessentials.chat.color` | Цветные коды `&` в чате и ЛС | 2 |
+| `chibiessentials.ec` | `/ec` (свой сундук) | 2 |
 | `chibiessentials.ec.others` | `/ec <игрок>` | 2 |
 | `chibiessentials.head` | `/head` | 2 |
+| `chibiessentials.hat` | `/hat` | 2 |
+| `chibiessentials.workbench` | `/workbench` | 2 |
+| `chibiessentials.sit` | `/sit` | 2 |
 | `chibiessentials.fly` | `/fly` | 2 |
 | `chibiessentials.god` | `/god` | 2 |
 | `chibiessentials.heal` | `/heal` | 2 |
+| `chibiessentials.feed` | `/feed` | 2 |
 | `chibiessentials.invsee` | `/invsee` | 2 |
 | `chibiessentials.vanish` | `/vanish` | 2 |
 | `chibiessentials.vanish.see` | Видеть vanished-игроков | 2 |
@@ -212,6 +247,9 @@ config/chibiessentials/
 |----------|----------|
 | `chibiessentials.home.max` | Максимум домов |
 | `chibiessentials.back.max` | Глубина истории `/back` |
+| `chibiessentials.chat.prefix` | Префикс в чате |
+| `chibiessentials.chat.suffix` | Суффикс в чате |
+| `chibiessentials.chat.nick` | Ник в чате |
 | `chibiessentials.back.cooldown` | Cooldown `/back` (сек.) |
 | `chibiessentials.back.warmup` | Warmup `/back` (сек.) |
 | `chibiessentials.spawn.cooldown` | Cooldown `/spawn` |

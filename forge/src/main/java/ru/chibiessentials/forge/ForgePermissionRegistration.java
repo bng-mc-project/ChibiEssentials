@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
-import ru.chibiessentials.ChibiEssentials;
+import ru.chibiessentials.permission.ChibiPermissions;
 import ru.chibiessentials.permission.PermissionNodes;
 
 import java.util.HashMap;
@@ -17,40 +17,50 @@ public final class ForgePermissionRegistration {
     private ForgePermissionRegistration() {}
 
     public static void onGatherNodes(PermissionGatherEvent.Nodes event) {
-        registerBoolean(event, PermissionNodes.BACK, 0);
-        registerBoolean(event, PermissionNodes.HOME, 0);
-        registerBoolean(event, PermissionNodes.SETHOME, 0);
-        registerBoolean(event, PermissionNodes.SPAWN, 0);
-        registerBoolean(event, PermissionNodes.SETSPAWN, 2);
-        registerBoolean(event, PermissionNodes.TPPOS, 2);
-        registerBoolean(event, PermissionNodes.WARP, 0);
-        registerBoolean(event, PermissionNodes.WARP_CREATE, 2);
-        registerBoolean(event, PermissionNodes.WARP_DELETE, 2);
-        registerBoolean(event, PermissionNodes.WARP_LIST, 0);
-        registerBoolean(event, PermissionNodes.TPA, 0);
-        registerBoolean(event, PermissionNodes.TPACCEPT, 0);
-        registerBoolean(event, PermissionNodes.TPDENY, 0);
-        registerBoolean(event, PermissionNodes.TPACANCEL, 0);
-        registerBoolean(event, PermissionNodes.MSG, 0);
-        registerBoolean(event, PermissionNodes.REPLY, 0);
-        registerBoolean(event, PermissionNodes.EC, 0);
-        registerBoolean(event, PermissionNodes.EC_OTHERS, 2);
-        registerBoolean(event, PermissionNodes.HEAD, 2);
-        registerBoolean(event, PermissionNodes.FLY, 2);
-        registerBoolean(event, PermissionNodes.INVSEE, 2);
-        registerBoolean(event, PermissionNodes.VANISH, 2);
-        registerBoolean(event, PermissionNodes.VANISH_SEE, 2);
-        registerBoolean(event, PermissionNodes.GOD, 2);
-        registerBoolean(event, PermissionNodes.HEAL, 2);
-        registerBoolean(event, PermissionNodes.RELOAD, 2);
-        registerBoolean(event, PermissionNodes.WHOIS, 2);
-        registerBoolean(event, PermissionNodes.GM_CREATIVE, 2);
-        registerBoolean(event, PermissionNodes.GM_SURVIVAL, 2);
-        registerBoolean(event, PermissionNodes.GM_ADVENTURE, 2);
-        registerBoolean(event, PermissionNodes.GM_SPECTATOR, 2);
-        
+        registerBoolean(event, PermissionNodes.BACK);
+        registerBoolean(event, PermissionNodes.HOME);
+        registerBoolean(event, PermissionNodes.SETHOME);
+        registerBoolean(event, PermissionNodes.SPAWN);
+        registerBoolean(event, PermissionNodes.SETSPAWN);
+        registerBoolean(event, PermissionNodes.TPPOS);
+        registerBoolean(event, PermissionNodes.TPHERE);
+        registerBoolean(event, PermissionNodes.WARP);
+        registerBoolean(event, PermissionNodes.WARP_CREATE);
+        registerBoolean(event, PermissionNodes.WARP_DELETE);
+        registerBoolean(event, PermissionNodes.WARP_LIST);
+        registerBoolean(event, PermissionNodes.TPA);
+        registerBoolean(event, PermissionNodes.TPACCEPT);
+        registerBoolean(event, PermissionNodes.TPDENY);
+        registerBoolean(event, PermissionNodes.TPACANCEL);
+        registerBoolean(event, PermissionNodes.CHAT);
+        registerBoolean(event, PermissionNodes.CHAT_COLOR);
+        registerBoolean(event, PermissionNodes.MSG);
+        registerBoolean(event, PermissionNodes.REPLY);
+        registerBoolean(event, PermissionNodes.EC);
+        registerBoolean(event, PermissionNodes.EC_OTHERS);
+        registerBoolean(event, PermissionNodes.HEAD);
+        registerBoolean(event, PermissionNodes.HAT);
+        registerBoolean(event, PermissionNodes.SIT);
+        registerBoolean(event, PermissionNodes.FEED);
+        registerBoolean(event, PermissionNodes.WORKBENCH);
+        registerBoolean(event, PermissionNodes.FLY);
+        registerBoolean(event, PermissionNodes.INVSEE);
+        registerBoolean(event, PermissionNodes.VANISH);
+        registerBoolean(event, PermissionNodes.VANISH_SEE);
+        registerBoolean(event, PermissionNodes.GOD);
+        registerBoolean(event, PermissionNodes.HEAL);
+        registerBoolean(event, PermissionNodes.RELOAD);
+        registerBoolean(event, PermissionNodes.WHOIS);
+        registerBoolean(event, PermissionNodes.GM_CREATIVE);
+        registerBoolean(event, PermissionNodes.GM_SURVIVAL);
+        registerBoolean(event, PermissionNodes.GM_ADVENTURE);
+        registerBoolean(event, PermissionNodes.GM_SPECTATOR);
+
         registerMeta(event, PermissionNodes.META_HOME_MAX);
         registerMeta(event, PermissionNodes.META_BACK_MAX);
+        registerMeta(event, PermissionNodes.META_CHAT_PREFIX);
+        registerMeta(event, PermissionNodes.META_CHAT_SUFFIX);
+        registerMeta(event, PermissionNodes.META_CHAT_NICK);
         registerMeta(event, PermissionNodes.metaCooldown("back"));
         registerMeta(event, PermissionNodes.metaCooldown("spawn"));
         registerMeta(event, PermissionNodes.metaCooldown("home"));
@@ -63,16 +73,17 @@ public final class ForgePermissionRegistration {
         registerMeta(event, PermissionNodes.metaWarmup("tpa"));
     }
 
-    private static void registerBoolean(PermissionGatherEvent.Nodes event, String node, int fallbackOp) {
-        PermissionNode<Boolean> permissionNode = new PermissionNode<>(ChibiEssentials.MOD_ID, node, PermissionTypes.BOOLEAN,
+    private static void registerBoolean(PermissionGatherEvent.Nodes event, String node) {
+        int fallbackOp = ChibiPermissions.DEFAULT_OP_FALLBACK;
+        PermissionNode<Boolean> permissionNode = new PermissionNode<>(ChibiPermissions.PERMISSION_NAMESPACE, node, PermissionTypes.BOOLEAN,
                 (player, playerUuid, context) -> player instanceof ServerPlayer && ((ServerPlayer) player).hasPermissions(fallbackOp));
-        NODES.put(ChibiEssentials.MOD_ID + "." + node, permissionNode);
+        NODES.put(ChibiPermissions.fullNode(node), permissionNode);
         event.addNodes(permissionNode);
     }
 
     private static void registerMeta(PermissionGatherEvent.Nodes event, String node) {
         String[] parts = node.split("\\.", 2);
-        String namespace = parts.length > 1 ? parts[0] : ChibiEssentials.MOD_ID;
+        String namespace = parts.length > 1 ? parts[0] : ChibiPermissions.PERMISSION_NAMESPACE;
         String name = parts.length > 1 ? parts[1] : node;
         PermissionNode<String> permissionNode = new PermissionNode<>(namespace, name, PermissionTypes.STRING,
                 (player, playerUuid, context) -> null);

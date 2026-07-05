@@ -23,7 +23,7 @@ public final class WhoisCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("whois")
-                .requires(ChibiPermissions.require(PermissionNodes.WHOIS, 2))
+                .requires(ChibiPermissions.require(PermissionNodes.WHOIS))
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> whois(ctx.getSource().getPlayerOrException(),
                                 EntityArgument.getPlayer(ctx, "player")))));

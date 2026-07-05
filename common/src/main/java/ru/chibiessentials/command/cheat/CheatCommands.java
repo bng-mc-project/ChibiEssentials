@@ -28,13 +28,19 @@ public final class CheatCommands {
         registerToggle(dispatcher, "god", PermissionNodes.GOD, CheatCommands::god);
 
         dispatcher.register(Commands.literal("heal")
-                .requires(ChibiPermissions.require(PermissionNodes.HEAL, 2))
+                .requires(ChibiPermissions.require(PermissionNodes.HEAL))
                 .executes(ctx -> heal(ctx.getSource().getPlayerOrException()))
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> heal(EntityArgument.getPlayer(ctx, "player")))));
 
+        dispatcher.register(Commands.literal("feed")
+                .requires(ChibiPermissions.require(PermissionNodes.FEED))
+                .executes(ctx -> feed(ctx.getSource().getPlayerOrException(), ctx.getSource().getPlayerOrException()))
+                .then(Commands.argument("player", EntityArgument.player())
+                        .executes(ctx -> feed(ctx.getSource().getPlayerOrException(), EntityArgument.getPlayer(ctx, "player")))));
+
         dispatcher.register(Commands.literal("invsee")
-                .requires(ChibiPermissions.require(PermissionNodes.INVSEE, 2))
+                .requires(ChibiPermissions.require(PermissionNodes.INVSEE))
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> invsee(ctx.getSource().getPlayerOrException(), EntityArgument.getPlayer(ctx, "player")))));
     }
@@ -42,7 +48,7 @@ public final class CheatCommands {
     private static void registerToggle(CommandDispatcher<CommandSourceStack> dispatcher, String name, String node,
                                        java.util.function.BiFunction<ServerPlayer, ServerPlayer, Integer> executor) {
         dispatcher.register(Commands.literal(name)
-                .requires(ChibiPermissions.require(node, 2))
+                .requires(ChibiPermissions.require(node))
                 .executes(ctx -> executor.apply(ctx.getSource().getPlayerOrException(), ctx.getSource().getPlayerOrException()))
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> executor.apply(ctx.getSource().getPlayerOrException(), EntityArgument.getPlayer(ctx, "player")))));
@@ -75,6 +81,17 @@ public final class CheatCommands {
         target.clearFire();
         target.getActiveEffects().stream().map(MobEffectInstance::getEffect).forEach(target::removeEffect);
         target.displayClientMessage(ChibiLang.get("chibiessentials.heal.done"), false);
+        return 1;
+    }
+
+    public static int feed(ServerPlayer executor, ServerPlayer target) {
+        FoodData food = target.getFoodData();
+        food.setFoodLevel(20);
+        food.setSaturation(20f);
+        target.displayClientMessage(ChibiLang.get("chibiessentials.feed.done"), false);
+        if (!executor.equals(target)) {
+            executor.displayClientMessage(ChibiLang.get("chibiessentials.feed.done_other", target.getDisplayName()), false);
+        }
         return 1;
     }
 

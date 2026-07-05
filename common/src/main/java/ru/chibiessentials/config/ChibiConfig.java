@@ -70,6 +70,7 @@ public final class ChibiConfig {
                     && hasSection(root, "warp", "warmup", "cooldown")
                     && hasSection(root, "tpa", "warmup", "cooldown", "requestTimeoutSeconds")
                     && hasSection(root, "messages", "format")
+                    && hasSection(root, "chat", "localRadius", "globalPrefix", "defaultMode")
                     && hasSection(root, "vanish", "hideFromTab", "hideChat");
         } catch (Exception e) {
             return false;
@@ -131,6 +132,7 @@ public final class ChibiConfig {
     public static TimedConfig warp() { return data.warp; }
     public static TpaConfig tpa() { return data.tpa; }
     public static MessagesConfig messages() { return data.messages; }
+    public static ChatConfig chat() { return data.chat; }
     public static VanishConfig vanish() { return data.vanish; }
 
     public static final class ConfigData {
@@ -141,6 +143,7 @@ public final class ChibiConfig {
         public TimedConfig warp = new TimedConfig(3, 5);
         public TpaConfig tpa = new TpaConfig();
         public MessagesConfig messages = new MessagesConfig();
+        public ChatConfig chat = new ChatConfig();
         public VanishConfig vanish = new VanishConfig();
     }
 
@@ -177,6 +180,12 @@ public final class ChibiConfig {
 
     public static final class MessagesConfig {
         public String format = "&7[&b{sender}&7] &f{message}";
+    }
+
+    public static final class ChatConfig {
+        public int localRadius = 100;
+        public String globalPrefix = "!";
+        public String defaultMode = "local";
     }
 
     public static final class VanishConfig {

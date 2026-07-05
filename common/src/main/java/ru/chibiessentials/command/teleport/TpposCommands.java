@@ -43,7 +43,7 @@ public final class TpposCommands {
                                                 StringArgumentType.getString(ctx, "world"))))));
 
         dispatcher.register(Commands.literal("tppos")
-                .requires(ChibiPermissions.require(PermissionNodes.TPPOS, 2))
+                .requires(ChibiPermissions.require(PermissionNodes.TPPOS))
                 .then(Commands.argument("x", DoubleArgumentType.doubleArg())
                         .then(Commands.argument("y", DoubleArgumentType.doubleArg())
                                 .then(zArg))));

@@ -7,7 +7,9 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.function.Predicate;
 
 public final class ChibiPermissions {
-    public static final String PREFIX = "chibiessentials.";
+    public static final String PERMISSION_NAMESPACE = "chibiessentials";
+    public static final String PREFIX = PERMISSION_NAMESPACE + ".";
+    public static final int DEFAULT_OP_FALLBACK = 2;
 
     private ChibiPermissions() {}
 
@@ -16,7 +18,7 @@ public final class ChibiPermissions {
     }
 
     public static boolean has(CommandSourceStack source, String node) {
-        return has(source, node, 0);
+        return has(source, node, DEFAULT_OP_FALLBACK);
     }
 
     public static boolean has(CommandSourceStack source, String node, int fallbackOpLevel) {
@@ -24,7 +26,7 @@ public final class ChibiPermissions {
     }
 
     public static boolean has(ServerPlayer player, String node) {
-        return has(player, node, 0);
+        return has(player, node, DEFAULT_OP_FALLBACK);
     }
 
     public static boolean has(ServerPlayer player, String node, int fallbackOpLevel) {
@@ -33,6 +35,14 @@ public final class ChibiPermissions {
 
     public static int getInt(ServerPlayer player, String node, int defaultValue) {
         return platformGetInt(player, fullNode(node), defaultValue);
+    }
+
+    public static String getString(ServerPlayer player, String node, String defaultValue) {
+        return platformGetString(player, fullNode(node), defaultValue);
+    }
+
+    public static Predicate<CommandSourceStack> require(String node) {
+        return require(node, DEFAULT_OP_FALLBACK);
     }
 
     public static Predicate<CommandSourceStack> require(String node, int fallbackOpLevel) {
@@ -51,6 +61,11 @@ public final class ChibiPermissions {
 
     @ExpectPlatform
     public static int platformGetInt(ServerPlayer player, String fullNode, int defaultValue) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static String platformGetString(ServerPlayer player, String fullNode, String defaultValue) {
         throw new AssertionError();
     }
 }

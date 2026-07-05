@@ -25,6 +25,7 @@ public final class PlayerData {
     private boolean fly;
     private boolean god;
     private boolean vanished;
+    private boolean chatGlobal;
     private String preVanishGameMode;
     private UUID lastMessaged;
 
@@ -54,6 +55,7 @@ public final class PlayerData {
         tpaTeleporter = new WarmupCooldownTeleporter(this,
                 p -> ChibiPermissions.getInt(p, PermissionNodes.metaCooldown("tpa"), ChibiConfig.tpa().cooldown),
                 p -> ChibiPermissions.getInt(p, PermissionNodes.metaWarmup("tpa"), ChibiConfig.tpa().warmup));
+        chatGlobal = "global".equalsIgnoreCase(ChibiConfig.chat().defaultMode);
     }
 
     public UUID getUuid() { return uuid; }
@@ -62,6 +64,7 @@ public final class PlayerData {
     public boolean isFly() { return fly; }
     public boolean isGod() { return god; }
     public boolean isVanished() { return vanished; }
+    public boolean isChatGlobal() { return chatGlobal; }
     public UUID getLastMessaged() { return lastMessaged; }
 
     public void setFly(boolean fly) {
@@ -81,6 +84,13 @@ public final class PlayerData {
     public void setVanished(boolean vanished) {
         if (this.vanished != vanished) {
             this.vanished = vanished;
+            markDirty();
+        }
+    }
+
+    public void setChatGlobal(boolean chatGlobal) {
+        if (this.chatGlobal != chatGlobal) {
+            this.chatGlobal = chatGlobal;
             markDirty();
         }
     }
@@ -153,6 +163,7 @@ public final class PlayerData {
         json.addProperty("fly", fly);
         json.addProperty("god", god);
         json.addProperty("vanished", vanished);
+        json.addProperty("chatGlobal", chatGlobal);
         if (preVanishGameMode != null) json.addProperty("preVanishGameMode", preVanishGameMode);
         if (lastMessaged != null) json.addProperty("lastMessaged", lastMessaged.toString());
 
@@ -170,6 +181,7 @@ public final class PlayerData {
         if (json.has("fly")) fly = json.get("fly").getAsBoolean();
         if (json.has("god")) god = json.get("god").getAsBoolean();
         if (json.has("vanished")) vanished = json.get("vanished").getAsBoolean();
+        if (json.has("chatGlobal")) chatGlobal = json.get("chatGlobal").getAsBoolean();
         if (json.has("preVanishGameMode")) preVanishGameMode = json.get("preVanishGameMode").getAsString();
         if (json.has("lastMessaged")) lastMessaged = UUID.fromString(json.get("lastMessaged").getAsString());
 

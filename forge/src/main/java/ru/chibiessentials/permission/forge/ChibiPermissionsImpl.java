@@ -19,4 +19,8 @@ public final class ChibiPermissionsImpl {
     public static int platformGetInt(ServerPlayer player, String fullNode, int defaultValue) {
         return ru.chibiessentials.forge.ChibiPermissionsImpl.platformGetInt(player, fullNode, defaultValue);
     }
+
+    public static String platformGetString(ServerPlayer player, String fullNode, String defaultValue) {
+        return ru.chibiessentials.forge.ChibiPermissionsImpl.platformGetString(player, fullNode, defaultValue);
+    }
 }
