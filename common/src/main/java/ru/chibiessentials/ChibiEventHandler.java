@@ -8,7 +8,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.GameRules;
 import ru.chibiessentials.chat.ChatHandler;
 import ru.chibiessentials.command.ChibiCommands;
 import ru.chibiessentials.command.teleport.TeleportCommands;
@@ -54,13 +53,13 @@ public final class ChibiEventHandler {
         PlayerDataManager.init(server);
         WorldData.instance = new WorldData(server);
         WorldData.instance.load();
-        TeleportCommands.syncLoadedSpawn(server);
-        server.getGameRules().getRule(GameRules.RULE_SPAWN_RADIUS).set(0, server);
         VanishHandler.clear();
     }
 
     private static void serverStarted(MinecraftServer server) {
         MessageCommands.applyOverrides(server.getCommands().getDispatcher());
+        TeleportCommands.syncLoadedSpawn(server);
+        TeleportCommands.applySpawnRadius(server);
     }
 
     private static void serverStopped(MinecraftServer server) {

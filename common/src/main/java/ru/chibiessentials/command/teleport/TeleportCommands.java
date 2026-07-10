@@ -101,6 +101,13 @@ public final class TeleportCommands {
         }
     }
 
+    public static void applySpawnRadius(MinecraftServer server) {
+        if (server.getLevel(Level.OVERWORLD) == null) {
+            return;
+        }
+        server.getGameRules().getRule(GameRules.RULE_SPAWN_RADIUS).set(0, server);
+    }
+
     private static void syncVanillaSpawn(MinecraftServer server, TeleportPos pos) {
         if (!pos.getDimension().equals(Level.OVERWORLD)) {
             return;
@@ -110,7 +117,7 @@ public final class TeleportCommands {
             return;
         }
         level.setDefaultSpawnPos(pos.getPos(), 0f);
-        server.getGameRules().getRule(GameRules.RULE_SPAWN_RADIUS).set(0, server);
+        applySpawnRadius(server);
     }
 
     private static TeleportPos resolveSpawn(ServerPlayer player) {
