@@ -44,8 +44,15 @@ public final class CheatCommands {
         dispatcher.register(Commands.literal("invsee")
                 .requires(ChibiPermissions.require(PermissionNodes.INVSEE))
                 .then(PlayerNameArgument.player("player")
-                        .executes(ctx -> invsee(ctx.getSource().getPlayerOrException(),
-                                PlayerNameArgument.find(ctx, "player").orElse(null)))));
+                        .executes(ctx -> {
+                            ServerPlayer viewer = ctx.getSource().getPlayerOrException();
+                            return PlayerNameArgument.find(ctx, "player")
+                                    .map(target -> invsee(viewer, target))
+                                    .orElseGet(() -> {
+                                        viewer.displayClientMessage(ChibiLang.get("chibiessentials.player.not_found"), false);
+                                        return 0;
+                                    });
+                        })));
     }
 
     private static void registerToggle(CommandDispatcher<CommandSourceStack> dispatcher, String name, String node,
@@ -99,10 +106,6 @@ public final class CheatCommands {
     }
 
     public static int invsee(ServerPlayer viewer, PlayerResolver.Target target) {
-        if (target == null) {
-            viewer.displayClientMessage(ChibiLang.get("chibiessentials.player.not_found"), false);
-            return 0;
-        }
         if (!target.isOnline() && OfflinePlayerStorage.load(viewer.server, target.uuid()).isEmpty()) {
             viewer.displayClientMessage(ChibiLang.get("chibiessentials.player.no_data", target.name()), false);
             return 0;

@@ -46,7 +46,7 @@ public final class OfflinePlayerStorage {
 
     public NonNullList<ItemStack> loadInventory() {
         NonNullList<ItemStack> items = NonNullList.withSize(INVENTORY_SLOTS, ItemStack.EMPTY);
-        loadItems(root, items, INVENTORY_TAG);
+        loadPlayerInventory(root, items);
         return items;
     }
 
@@ -57,7 +57,7 @@ public final class OfflinePlayerStorage {
     }
 
     public void saveInventory(NonNullList<ItemStack> items) {
-        saveItems(root, items, INVENTORY_TAG);
+        savePlayerInventory(root, items);
     }
 
     public void saveEnderChest(NonNullList<ItemStack> items) {
@@ -71,6 +71,64 @@ public final class OfflinePlayerStorage {
         } catch (IOException e) {
             ChibiEssentials.LOGGER.error("Failed to save offline player data {}", file, e);
         }
+    }
+
+    private static void loadPlayerInventory(CompoundTag root, NonNullList<ItemStack> items) {
+        ListTag list = root.getList(INVENTORY_TAG, Tag.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag itemTag = list.getCompound(i);
+            int nbtSlot = itemTag.getByte("Slot") & 255;
+            int slot = mapNbtSlotToInventory(nbtSlot);
+            if (slot >= 0 && slot < items.size()) {
+                items.set(slot, ItemStack.of(itemTag));
+            }
+        }
+    }
+
+    private static void savePlayerInventory(CompoundTag root, NonNullList<ItemStack> items) {
+        ListTag list = new ListTag();
+        for (int slot = 0; slot < items.size(); slot++) {
+            ItemStack stack = items.get(slot);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            int nbtSlot = mapInventorySlotToNbt(slot);
+            if (nbtSlot < 0) {
+                continue;
+            }
+            CompoundTag itemTag = new CompoundTag();
+            itemTag.putByte("Slot", (byte) nbtSlot);
+            stack.save(itemTag);
+            list.add(itemTag);
+        }
+        root.put(INVENTORY_TAG, list);
+    }
+
+    /** Vanilla stores armor at 100-103 and offhand at 150 in player .dat files. */
+    private static int mapNbtSlotToInventory(int nbtSlot) {
+        if (nbtSlot >= 0 && nbtSlot < 36) {
+            return nbtSlot;
+        }
+        if (nbtSlot >= 100 && nbtSlot < 104) {
+            return nbtSlot - 100 + 36;
+        }
+        if (nbtSlot == 150) {
+            return 40;
+        }
+        return -1;
+    }
+
+    private static int mapInventorySlotToNbt(int slot) {
+        if (slot >= 0 && slot < 36) {
+            return slot;
+        }
+        if (slot >= 36 && slot < 40) {
+            return slot - 36 + 100;
+        }
+        if (slot == 40) {
+            return 150;
+        }
+        return -1;
     }
 
     private static void loadItems(CompoundTag root, NonNullList<ItemStack> items, String key) {

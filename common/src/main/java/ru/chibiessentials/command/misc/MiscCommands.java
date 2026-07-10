@@ -35,8 +35,15 @@ public final class MiscCommands {
                 .executes(ctx -> enderChest(ctx.getSource().getPlayerOrException(), null))
                 .then(PlayerNameArgument.player("player")
                         .requires(ChibiPermissions.require(PermissionNodes.EC_OTHERS))
-                        .executes(ctx -> enderChest(ctx.getSource().getPlayerOrException(),
-                                PlayerNameArgument.find(ctx, "player").orElse(null)))));
+                        .executes(ctx -> {
+                            ServerPlayer viewer = ctx.getSource().getPlayerOrException();
+                            return PlayerNameArgument.find(ctx, "player")
+                                    .map(target -> enderChest(viewer, target))
+                                    .orElseGet(() -> {
+                                        viewer.displayClientMessage(ChibiLang.get("chibiessentials.player.not_found"), false);
+                                        return 0;
+                                    });
+                        })));
 
         dispatcher.register(Commands.literal("head")
                 .requires(ChibiPermissions.require(PermissionNodes.HEAD))
