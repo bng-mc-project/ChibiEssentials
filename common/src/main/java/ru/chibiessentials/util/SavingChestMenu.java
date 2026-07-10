@@ -1,31 +1,26 @@
 package ru.chibiessentials.util;
 
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public final class InvSeeMenu extends ChestMenu {
-    private static final int ROWS = 5;
-
+public final class SavingChestMenu extends ChestMenu {
     private final boolean editable;
-    private final Container targetInventory;
+    private final Container targetContainer;
     private final Runnable onClose;
+    private final int containerSlots;
 
-    public InvSeeMenu(int containerId, Inventory playerInventory, OtherPlayerInventory targetInventory, boolean editable) {
-        this(containerId, playerInventory, targetInventory, editable, null);
-    }
-
-    public InvSeeMenu(int containerId, Inventory playerInventory, OtherPlayerInventory targetInventory,
-                      boolean editable, Runnable onClose) {
-        super(MenuType.GENERIC_9x5, containerId, playerInventory, targetInventory, ROWS);
+    public SavingChestMenu(MenuType<?> type, int containerId, net.minecraft.world.entity.player.Inventory playerInventory,
+                           Container container, int rows, boolean editable, Container targetContainer, Runnable onClose) {
+        super(type, containerId, playerInventory, container, rows);
         this.editable = editable;
-        this.targetInventory = targetInventory;
+        this.targetContainer = targetContainer;
         this.onClose = onClose;
+        this.containerSlots = rows * 9;
     }
 
     @Override
@@ -54,18 +49,10 @@ public final class InvSeeMenu extends ChestMenu {
 
     @Override
     public boolean canDragTo(Slot slot) {
-        if (!editable && slot.container == targetInventory) {
+        if (!editable && slot.container == targetContainer) {
             return false;
         }
         return super.canDragTo(slot);
-    }
-
-    private boolean isTargetMenuSlot(int slotId) {
-        return slotId >= 0 && slotId < ROWS * 9;
-    }
-
-    private boolean intersectsTargetSlots(int startIndex, int endIndex) {
-        return startIndex < ROWS * 9 && endIndex > 0;
     }
 
     @Override
@@ -74,5 +61,13 @@ public final class InvSeeMenu extends ChestMenu {
         if (onClose != null) {
             onClose.run();
         }
+    }
+
+    private boolean isTargetMenuSlot(int slotId) {
+        return slotId >= 0 && slotId < containerSlots;
+    }
+
+    private boolean intersectsTargetSlots(int startIndex, int endIndex) {
+        return startIndex < containerSlots && endIndex > 0;
     }
 }

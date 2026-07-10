@@ -166,7 +166,7 @@ config/chibiessentials/
 | `/feed [игрок]` | Восстановить голод и насыщение | `chibiessentials.feed` |
 | `/invsee <игрок>` | Просмотр инвентаря игрока (редактирование — отдельное право) | `chibiessentials.invsee` |
 | `/vanish [игрок]` | Режим невидимости (spectator) | `chibiessentials.vanish` |
-| `/ec [игрок]` | Открыть эндер-сундук | `chibiessentials.ec` / `chibiessentials.ec.others` |
+| `/ec [игрок]` | Открыть эндер-сундук (чужой — только просмотр, редактирование отдельным правом) | `chibiessentials.ec` / `chibiessentials.ec.others` |
 | `/head <игрок>` | Выдать голову игрока | `chibiessentials.head` |
 | `/hat` | Надеть предмет из руки на голову | `chibiessentials.hat` |
 | `/workbench` | Открыть верстак | `chibiessentials.workbench` |
@@ -222,7 +222,8 @@ config/chibiessentials/
 | `chibiessentials.chat` | Публичный чат | 2 |
 | `chibiessentials.chat.color` | Цветные коды `&` в чате и ЛС | 2 |
 | `chibiessentials.ec` | `/ec` (свой сундук) | 2 |
-| `chibiessentials.ec.others` | `/ec <игрок>` | 2 |
+| `chibiessentials.ec.others` | `/ec <игрок>` (только просмотр) | 2 |
+| `chibiessentials.ec.others.edit` | Редактирование чужого эндер-сундука | 2 |
 | `chibiessentials.head` | `/head` | 2 |
 | `chibiessentials.hat` | `/hat` | 2 |
 | `chibiessentials.workbench` | `/workbench` | 2 |

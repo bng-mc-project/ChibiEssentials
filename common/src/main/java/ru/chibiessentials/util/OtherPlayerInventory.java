@@ -1,5 +1,6 @@
 package ru.chibiessentials.util;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -7,10 +8,12 @@ import net.minecraft.world.item.ItemStack;
 
 public class OtherPlayerInventory implements Container {
     public static final int SIZE = 45;
+    public static final int PLAYER_SLOTS = 41;
 
     private static final int[] SLOT_MAP = buildSlotMap();
 
     private final Inventory inventory;
+    private final NonNullList<ItemStack> offlineItems;
     private final boolean readOnly;
 
     public OtherPlayerInventory(Player player) {
@@ -19,6 +22,13 @@ public class OtherPlayerInventory implements Container {
 
     public OtherPlayerInventory(Player player, boolean readOnly) {
         this.inventory = player.getInventory();
+        this.offlineItems = null;
+        this.readOnly = readOnly;
+    }
+
+    public OtherPlayerInventory(NonNullList<ItemStack> offlineItems, boolean readOnly) {
+        this.inventory = null;
+        this.offlineItems = offlineItems;
         this.readOnly = readOnly;
     }
 
@@ -60,7 +70,7 @@ public class OtherPlayerInventory implements Container {
     @Override
     public ItemStack getItem(int slot) {
         int mapped = mapSlot(slot);
-        return mapped < 0 ? ItemStack.EMPTY : inventory.getItem(mapped);
+        return mapped < 0 ? ItemStack.EMPTY : getStoredItem(mapped);
     }
 
     @Override
@@ -69,7 +79,21 @@ public class OtherPlayerInventory implements Container {
             return ItemStack.EMPTY;
         }
         int mapped = mapSlot(slot);
-        return mapped < 0 ? ItemStack.EMPTY : inventory.removeItem(mapped, amount);
+        if (mapped < 0) {
+            return ItemStack.EMPTY;
+        }
+        if (inventory != null) {
+            return inventory.removeItem(mapped, amount);
+        }
+        ItemStack stack = offlineItems.get(mapped);
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack removed = stack.split(amount);
+        if (stack.isEmpty()) {
+            offlineItems.set(mapped, ItemStack.EMPTY);
+        }
+        return removed;
     }
 
     @Override
@@ -78,7 +102,19 @@ public class OtherPlayerInventory implements Container {
             return ItemStack.EMPTY;
         }
         int mapped = mapSlot(slot);
-        return mapped < 0 ? ItemStack.EMPTY : inventory.removeItemNoUpdate(mapped);
+        if (mapped < 0) {
+            return ItemStack.EMPTY;
+        }
+        if (inventory != null) {
+            return inventory.removeItemNoUpdate(mapped);
+        }
+        ItemStack stack = offlineItems.get(mapped);
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack removed = stack.copy();
+        offlineItems.set(mapped, ItemStack.EMPTY);
+        return removed;
     }
 
     @Override
@@ -87,14 +123,21 @@ public class OtherPlayerInventory implements Container {
             return;
         }
         int mapped = mapSlot(slot);
-        if (mapped >= 0) {
+        if (mapped < 0) {
+            return;
+        }
+        if (inventory != null) {
             inventory.setItem(mapped, stack);
+        } else {
+            offlineItems.set(mapped, stack);
         }
     }
 
     @Override
     public void setChanged() {
-        inventory.setChanged();
+        if (inventory != null) {
+            inventory.setChanged();
+        }
     }
 
     @Override
@@ -110,6 +153,13 @@ public class OtherPlayerInventory implements Container {
         for (int slot = 0; slot < SIZE; slot++) {
             setItem(slot, ItemStack.EMPTY);
         }
+    }
+
+    private ItemStack getStoredItem(int mapped) {
+        if (inventory != null) {
+            return inventory.getItem(mapped);
+        }
+        return offlineItems.get(mapped);
     }
 
     private static int mapSlot(int slot) {

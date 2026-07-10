@@ -22,6 +22,7 @@ public final class PermissionNodes {
     public static final String REPLY = "reply";
     public static final String EC = "ec";
     public static final String EC_OTHERS = "ec.others";
+    public static final String EC_OTHERS_EDIT = "ec.others.edit";
     public static final String HEAD = "head";
     public static final String HAT = "hat";
     public static final String SIT = "sit";

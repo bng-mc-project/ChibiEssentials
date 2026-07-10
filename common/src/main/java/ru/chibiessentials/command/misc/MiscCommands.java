@@ -13,13 +13,18 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.CraftingMenu;
-import net.minecraft.world.inventory.PlayerEnderChestContainer;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.EquipmentSlot;
 import ru.chibiessentials.permission.ChibiPermissions;
 import ru.chibiessentials.permission.PermissionNodes;
 import ru.chibiessentials.util.HeadUtil;
+import ru.chibiessentials.util.OfflinePlayerStorage;
+import ru.chibiessentials.util.PlayerNameArgument;
+import ru.chibiessentials.util.PlayerResolver;
+import ru.chibiessentials.util.SavingChestMenu;
 import ru.chibiessentials.util.SitHandler;
+import ru.chibiessentials.util.StoredItemContainer;
 
 public final class MiscCommands {
     private MiscCommands() {}
@@ -28,9 +33,10 @@ public final class MiscCommands {
         dispatcher.register(Commands.literal("ec")
                 .requires(ChibiPermissions.require(PermissionNodes.EC))
                 .executes(ctx -> enderChest(ctx.getSource().getPlayerOrException(), null))
-                .then(Commands.argument("player", EntityArgument.player())
+                .then(PlayerNameArgument.player("player")
                         .requires(ChibiPermissions.require(PermissionNodes.EC_OTHERS))
-                        .executes(ctx -> enderChest(ctx.getSource().getPlayerOrException(), EntityArgument.getPlayer(ctx, "player")))));
+                        .executes(ctx -> enderChest(ctx.getSource().getPlayerOrException(),
+                                PlayerNameArgument.find(ctx, "player").orElse(null)))));
 
         dispatcher.register(Commands.literal("head")
                 .requires(ChibiPermissions.require(PermissionNodes.HEAD))
@@ -50,13 +56,41 @@ public final class MiscCommands {
                 .executes(ctx -> sit(ctx.getSource().getPlayerOrException())));
     }
 
-    public static int enderChest(ServerPlayer viewer, ServerPlayer target) {
-        ServerPlayer ecOwner = target != null ? target : viewer;
-        viewer.openMenu(new net.minecraft.world.SimpleMenuProvider(
-                (id, inv, player) -> ChestMenu.threeRows(id, inv, ecOwner.getEnderChestInventory()),
-                Component.translatable("container.enderchest")
+    public static int enderChest(ServerPlayer viewer, PlayerResolver.Target target) {
+        if (target != null && !target.isOnline()
+                && OfflinePlayerStorage.load(viewer.server, target.uuid()).isEmpty()) {
+            viewer.displayClientMessage(ChibiLang.get("chibiessentials.player.no_data", target.name()), false);
+            return 0;
+        }
+
+        Component title = target != null
+                ? Component.literal(target.name())
+                : Component.translatable("container.enderchest");
+        viewer.openMenu(new SimpleMenuProvider(
+                (id, inv, player) -> buildEnderChestMenu(id, inv, viewer, target),
+                title
         ));
         return 1;
+    }
+
+    private static ChestMenu buildEnderChestMenu(int id, Inventory inv, ServerPlayer viewer, PlayerResolver.Target target) {
+        if (target == null) {
+            return ChestMenu.threeRows(id, inv, viewer.getEnderChestInventory());
+        }
+
+        boolean editable = ChibiPermissions.has(viewer, PermissionNodes.EC_OTHERS_EDIT);
+        if (target.isOnline()) {
+            var chest = target.online().getEnderChestInventory();
+            return new SavingChestMenu(MenuType.GENERIC_9x3, id, inv, chest, 3, editable, chest, null);
+        }
+
+        OfflinePlayerStorage storage = OfflinePlayerStorage.load(viewer.server, target.uuid()).orElseThrow();
+        StoredItemContainer container = new StoredItemContainer(storage.loadEnderChest(), !editable);
+        Runnable onClose = editable ? () -> {
+            storage.saveEnderChest(container.getItems());
+            storage.save();
+        } : null;
+        return new SavingChestMenu(MenuType.GENERIC_9x3, id, inv, container, 3, editable, container, onClose);
     }
 
     public static int head(ServerPlayer receiver, ServerPlayer target) {

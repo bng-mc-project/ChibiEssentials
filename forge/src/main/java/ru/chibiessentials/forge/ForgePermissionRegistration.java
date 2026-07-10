@@ -38,6 +38,7 @@ public final class ForgePermissionRegistration {
         registerBoolean(event, PermissionNodes.REPLY);
         registerBoolean(event, PermissionNodes.EC);
         registerBoolean(event, PermissionNodes.EC_OTHERS);
+        registerBoolean(event, PermissionNodes.EC_OTHERS_EDIT);
         registerBoolean(event, PermissionNodes.HEAD);
         registerBoolean(event, PermissionNodes.HAT);
         registerBoolean(event, PermissionNodes.SIT);

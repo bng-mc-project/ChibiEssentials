@@ -44,6 +44,8 @@
   "chibiessentials.msg.self": "You cannot message yourself.",
   "chibiessentials.msg.no_reply_target": "You have nobody to reply to.",
   "chibiessentials.msg.offline": "That player is offline.",
+  "chibiessentials.player.not_found": "Player not found.",
+  "chibiessentials.player.no_data": "No saved data found for player %s.",
   "chibiessentials.msg.to": "&6[To %s]&f %s",
   "chibiessentials.msg.from": "&6[From %s]&f %s",
   "chibiessentials.chat.format.global": "{prefix}&b{nick}{suffix}&7: &f{message}",
