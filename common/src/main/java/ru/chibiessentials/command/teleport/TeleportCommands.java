@@ -8,6 +8,7 @@ import ru.chibiessentials.config.ChibiLang;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import ru.chibiessentials.data.PlayerData;
 import ru.chibiessentials.data.PlayerDataManager;
@@ -81,6 +82,10 @@ public final class TeleportCommands {
     }
 
     public static void applyRespawnSpawn(ServerPlayer player) {
+        applySpawnPoint(player);
+    }
+
+    public static void applySpawnPoint(ServerPlayer player) {
         if (WorldData.instance == null) return;
         if (player.getRespawnPosition() != null) return;
         TeleportPos spawn = WorldData.instance.getSpawn();
@@ -105,6 +110,7 @@ public final class TeleportCommands {
             return;
         }
         level.setDefaultSpawnPos(pos.getPos(), 0f);
+        server.getGameRules().getRule(GameRules.RULE_SPAWN_RADIUS).set(0, server);
     }
 
     private static TeleportPos resolveSpawn(ServerPlayer player) {

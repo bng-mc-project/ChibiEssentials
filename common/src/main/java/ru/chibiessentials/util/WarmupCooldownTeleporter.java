@@ -60,6 +60,11 @@ public final class WarmupCooldownTeleporter {
     }
 
     public TeleportPos.TeleportResult teleport(ServerPlayer player, Function<ServerPlayer, TeleportPos> positionGetter) {
+        return teleport(player, positionGetter, null);
+    }
+
+    public TeleportPos.TeleportResult teleport(ServerPlayer player, Function<ServerPlayer, TeleportPos> positionGetter,
+                                               Runnable onSuccess) {
         TeleportPos.TeleportResult cooldownResult = checkCooldown();
         if (!cooldownResult.isSuccess()) {
             return cooldownResult;
@@ -67,19 +72,25 @@ public final class WarmupCooldownTeleporter {
 
         int warmupTime = warmupConfig.applyAsInt(player);
         if (warmupTime <= 0) {
-            return teleportNow(player, positionGetter);
+            return teleportNow(player, positionGetter, onSuccess);
         }
 
         PENDING_ADDITIONS.put(player.getUUID(), new Warmup(
                 System.currentTimeMillis() + warmupTime * 1000L,
                 this,
                 player.position(),
-                positionGetter
+                positionGetter,
+                onSuccess
         ));
-        return TeleportPos.TeleportResult.SUCCESS;
+        return TeleportPos.TeleportResult.warmupScheduled(warmupTime);
     }
 
     private TeleportPos.TeleportResult teleportNow(ServerPlayer player, Function<ServerPlayer, TeleportPos> positionGetter) {
+        return teleportNow(player, positionGetter, null);
+    }
+
+    private TeleportPos.TeleportResult teleportNow(ServerPlayer player, Function<ServerPlayer, TeleportPos> positionGetter,
+                                                   Runnable onSuccess) {
         cooldown = System.currentTimeMillis() + Math.max(0L, cooldownConfig.applyAsInt(player) * 1000L);
 
         TeleportPos target = positionGetter.apply(player);
@@ -94,6 +105,9 @@ public final class WarmupCooldownTeleporter {
                 playerData.popTeleportHistory();
             } else if (pushHistoryOnTeleport && !ChibiConfig.back().onDeathOnly) {
                 playerData.addTeleportHistory(currentPos);
+            }
+            if (onSuccess != null) {
+                onSuccess.run();
             }
         }
         return result;
@@ -122,10 +136,10 @@ public final class WarmupCooldownTeleporter {
 
             Warmup warmup = entry.getValue();
             if (warmup.when <= now) {
-                TeleportPos.TeleportResult res = warmup.teleporter.teleportNow(player, warmup.positionGetter);
+                TeleportPos.TeleportResult res = warmup.teleporter.teleportNow(player, warmup.positionGetter, warmup.onSuccess);
                 toRemove.add(playerId);
                 res.runCommand(player);
-            } else if (player.position().distanceToSqr(warmup.initialPos) > 0.25) {
+            } else if (player.position().distanceToSqr(warmup.initialPos) > 9.0D) {
                 toRemove.add(playerId);
                 player.displayClientMessage(ChibiLang.get("chibiessentials.teleport.interrupted").withStyle(ChatFormatting.RED), true);
             } else {
@@ -145,5 +159,5 @@ public final class WarmupCooldownTeleporter {
     }
 
     private record Warmup(long when, WarmupCooldownTeleporter teleporter, Vec3 initialPos,
-                          Function<ServerPlayer, TeleportPos> positionGetter) {}
+                          Function<ServerPlayer, TeleportPos> positionGetter, Runnable onSuccess) {}
 }

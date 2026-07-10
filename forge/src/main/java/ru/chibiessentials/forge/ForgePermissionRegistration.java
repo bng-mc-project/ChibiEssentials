@@ -45,6 +45,7 @@ public final class ForgePermissionRegistration {
         registerBoolean(event, PermissionNodes.WORKBENCH);
         registerBoolean(event, PermissionNodes.FLY);
         registerBoolean(event, PermissionNodes.INVSEE);
+        registerBoolean(event, PermissionNodes.INVSEE_EDIT);
         registerBoolean(event, PermissionNodes.VANISH);
         registerBoolean(event, PermissionNodes.VANISH_SEE);
         registerBoolean(event, PermissionNodes.GOD);

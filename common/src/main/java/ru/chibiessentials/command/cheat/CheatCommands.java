@@ -13,11 +13,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.MenuType;
 import ru.chibiessentials.data.PlayerDataManager;
 import ru.chibiessentials.permission.ChibiPermissions;
 import ru.chibiessentials.permission.PermissionNodes;
+import ru.chibiessentials.util.InvSeeMenu;
 import ru.chibiessentials.util.OtherPlayerInventory;
 
 public final class CheatCommands {
@@ -96,6 +95,8 @@ public final class CheatCommands {
     }
 
     public static int invsee(ServerPlayer viewer, ServerPlayer target) {
+        boolean editable = ChibiPermissions.has(viewer, PermissionNodes.INVSEE_EDIT);
+        OtherPlayerInventory targetInventory = new OtherPlayerInventory(target, !editable);
         MenuProvider provider = new MenuProvider() {
             @Override
             public Component getDisplayName() {
@@ -104,7 +105,7 @@ public final class CheatCommands {
 
             @Override
             public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
-                return new ChestMenu(MenuType.GENERIC_9x5, id, inv, new OtherPlayerInventory(target), 5);
+                return new InvSeeMenu(id, inv, targetInventory, editable);
             }
         };
         viewer.openMenu(provider);

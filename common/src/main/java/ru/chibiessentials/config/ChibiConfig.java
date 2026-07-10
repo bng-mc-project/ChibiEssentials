@@ -179,7 +179,7 @@ public final class ChibiConfig {
     }
 
     public static final class MessagesConfig {
-        public String format = "&7[&b{sender}&7] &f{message}";
+        public String format = "&f{message}";
     }
 
     public static final class ChatConfig {

@@ -50,6 +50,13 @@ public final class PlayerDataManager {
         return Optional.of(CACHE.computeIfAbsent(player.getUUID(), id -> loadOrNew(id, player.getGameProfile().getName())));
     }
 
+    public static boolean isFirstJoin(ServerPlayer player) {
+        if (dataDir == null) {
+            return false;
+        }
+        return !Files.exists(dataDir.resolve(player.getUUID() + ".json"));
+    }
+
     public static void unload(ServerPlayer player) {
         PlayerData data = CACHE.get(player.getUUID());
         if (data != null) {

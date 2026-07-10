@@ -29,6 +29,7 @@ public final class PermissionNodes {
     public static final String WORKBENCH = "workbench";
     public static final String FLY = "fly";
     public static final String INVSEE = "invsee";
+    public static final String INVSEE_EDIT = "invsee.edit";
     public static final String VANISH = "vanish";
     public static final String VANISH_SEE = "vanish.see";
     public static final String GOD = "god";

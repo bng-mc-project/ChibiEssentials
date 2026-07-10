@@ -151,16 +151,18 @@ public final class TpaCommands {
         PlayerData targetData = PlayerDataManager.getOrCreate(player).orElse(null);
         if (sourceData == null || targetData == null) return 0;
 
-        TeleportPos.TeleportResult result = request.here()
-                ? targetData.tpaTeleporter.teleport(player, p -> new TeleportPos(sourcePlayer))
-                : sourceData.tpaTeleporter.teleport(sourcePlayer, p -> new TeleportPos(player));
-
-        if (result.isSuccess()) {
+        ServerPlayer teleporter = request.here() ? player : sourcePlayer;
+        Runnable onSuccess = () -> {
             REQUESTS.remove(id);
             sourcePlayer.displayClientMessage(ChibiLang.get("chibiessentials.tpa.accepted"), false);
             player.displayClientMessage(ChibiLang.get("chibiessentials.tpa.accepted"), false);
-        }
-        return result.runCommand(player);
+        };
+
+        TeleportPos.TeleportResult result = request.here()
+                ? targetData.tpaTeleporter.teleport(player, p -> new TeleportPos(sourcePlayer), onSuccess)
+                : sourceData.tpaTeleporter.teleport(sourcePlayer, p -> new TeleportPos(player), onSuccess);
+
+        return result.runCommand(teleporter);
     }
 
     public static int tpdeny(ServerPlayer player, String id) {

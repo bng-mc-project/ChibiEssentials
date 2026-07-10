@@ -67,7 +67,7 @@ config/chibiessentials/
 | `warp.warmup` / `warp.cooldown` | Warmup и cooldown для `/warp` |
 | `tpa.warmup` / `tpa.cooldown` | Warmup и cooldown после принятия TPA |
 | `tpa.requestTimeoutSeconds` | Время жизни TPA-запроса |
-| `messages.format` | Формат ЛС (`{sender}`, `{message}`, цвета через `&`) |
+| `messages.format` | Формат текста ЛС (`{message}`, цвета через `&`; имя — в lang-ключах `msg.to` / `msg.from`) |
 | `chat.localRadius` | Радиус локального чата (блоки) |
 | `chat.globalPrefix` | Префикс для принудительного глобального сообщения (например `!`) |
 | `chat.defaultMode` | Режим чата по умолчанию: `local` или `global` |
@@ -130,7 +130,9 @@ config/chibiessentials/
 |---------|----------|----------|
 | `/msg <игрок> <текст>` | Личное сообщение | `chibiessentials.msg` |
 | `/m <игрок> <текст>` | Алиас `/msg` | `chibiessentials.msg` |
+| `/tell <игрок> <текст>` | Алиас `/m` (заменяет ванильный `/tell`) | `chibiessentials.msg` |
 | `/reply <текст>` | Ответ последнему собеседнику | `chibiessentials.reply` |
+| `/r <текст>` | Алиас `/reply` | `chibiessentials.reply` |
 
 ### Чат
 
@@ -162,7 +164,7 @@ config/chibiessentials/
 | `/god [игрок]` | Переключить неуязвимость — отмена урона, без изменения gamemode | `chibiessentials.god` |
 | `/heal [игрок]` | Полное исцеление | `chibiessentials.heal` |
 | `/feed [игрок]` | Восстановить голод и насыщение | `chibiessentials.feed` |
-| `/invsee <игрок>` | Просмотр инвентаря игрока | `chibiessentials.invsee` |
+| `/invsee <игрок>` | Просмотр инвентаря игрока (редактирование — отдельное право) | `chibiessentials.invsee` |
 | `/vanish [игрок]` | Режим невидимости (spectator) | `chibiessentials.vanish` |
 | `/ec [игрок]` | Открыть эндер-сундук | `chibiessentials.ec` / `chibiessentials.ec.others` |
 | `/head <игрок>` | Выдать голову игрока | `chibiessentials.head` |
@@ -215,8 +217,8 @@ config/chibiessentials/
 | `chibiessentials.tpaccept` | `/tpaccept` | 2 |
 | `chibiessentials.tpdeny` | `/tpdeny` | 2 |
 | `chibiessentials.tpacancel` | `/tpacancel` | 2 |
-| `chibiessentials.msg` | `/msg`, `/m` | 2 |
-| `chibiessentials.reply` | `/reply` | 2 |
+| `chibiessentials.msg` | `/m`, `/msg`, `/tell` | 2 |
+| `chibiessentials.reply` | `/reply`, `/r` | 2 |
 | `chibiessentials.chat` | Публичный чат | 2 |
 | `chibiessentials.chat.color` | Цветные коды `&` в чате и ЛС | 2 |
 | `chibiessentials.ec` | `/ec` (свой сундук) | 2 |
@@ -229,7 +231,8 @@ config/chibiessentials/
 | `chibiessentials.god` | `/god` | 2 |
 | `chibiessentials.heal` | `/heal` | 2 |
 | `chibiessentials.feed` | `/feed` | 2 |
-| `chibiessentials.invsee` | `/invsee` | 2 |
+| `chibiessentials.invsee` | `/invsee` (только просмотр) | 2 |
+| `chibiessentials.invsee.edit` | Редактирование слотов в `/invsee` | 2 |
 | `chibiessentials.vanish` | `/vanish` | 2 |
 | `chibiessentials.vanish.see` | Видеть vanished-игроков | 2 |
 | `chibiessentials.whois` | `/whois` | 2 |

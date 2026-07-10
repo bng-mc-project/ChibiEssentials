@@ -8,10 +8,12 @@ import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameRules;
 import ru.chibiessentials.chat.ChatHandler;
 import ru.chibiessentials.command.ChibiCommands;
 import ru.chibiessentials.command.teleport.TeleportCommands;
 import ru.chibiessentials.command.cheat.CheatCommands;
+import ru.chibiessentials.command.message.MessageCommands;
 import ru.chibiessentials.command.tpa.TpaCommands;
 import ru.chibiessentials.config.ChibiConfig;
 import ru.chibiessentials.data.PlayerDataManager;
@@ -25,6 +27,7 @@ public final class ChibiEventHandler {
 
     public static void init() {
         LifecycleEvent.SERVER_BEFORE_START.register(ChibiEventHandler::serverStarting);
+        LifecycleEvent.SERVER_STARTED.register(ChibiEventHandler::serverStarted);
         LifecycleEvent.SERVER_STOPPED.register(ChibiEventHandler::serverStopped);
         LifecycleEvent.SERVER_LEVEL_SAVE.register(ChibiEventHandler::levelSave);
 
@@ -52,7 +55,12 @@ public final class ChibiEventHandler {
         WorldData.instance = new WorldData(server);
         WorldData.instance.load();
         TeleportCommands.syncLoadedSpawn(server);
+        server.getGameRules().getRule(GameRules.RULE_SPAWN_RADIUS).set(0, server);
         VanishHandler.clear();
+    }
+
+    private static void serverStarted(MinecraftServer server) {
+        MessageCommands.applyOverrides(server.getCommands().getDispatcher());
     }
 
     private static void serverStopped(MinecraftServer server) {
@@ -94,9 +102,19 @@ public final class ChibiEventHandler {
     }
 
     private static void playerJoin(ServerPlayer player) {
+        boolean firstJoin = PlayerDataManager.isFirstJoin(player);
         PlayerDataManager.getOrCreate(player);
         CheatCommands.reapplyStates(player);
         VanishHandler.applyOnJoin(player);
+        if (firstJoin) {
+            player.server.execute(() -> {
+                TeleportCommands.applySpawnPoint(player);
+                PlayerDataManager.getOrCreate(player).ifPresent(data -> {
+                    data.markDirty();
+                    PlayerDataManager.saveIfChanged(data);
+                });
+            });
+        }
     }
 
     private static void playerQuit(ServerPlayer player) {

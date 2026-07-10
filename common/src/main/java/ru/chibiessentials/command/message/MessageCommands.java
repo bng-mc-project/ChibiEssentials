@@ -2,6 +2,7 @@ package ru.chibiessentials.command.message;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -14,29 +15,51 @@ import ru.chibiessentials.permission.PermissionNodes;
 import ru.chibiessentials.util.MessageUtil;
 
 public final class MessageCommands {
+    private static final String[] MESSAGE_ALIASES = {"m", "msg", "tell"};
+    private static final String[] REPLY_ALIASES = {"reply", "r"};
+    private static final String[] VANILLA_MESSAGE_ALIASES = {"tell", "msg", "w"};
+
     private MessageCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("msg")
+        applyOverrides(dispatcher);
+    }
+
+    public static void applyOverrides(CommandDispatcher<CommandSourceStack> dispatcher) {
+        removeCommands(dispatcher, MESSAGE_ALIASES);
+        removeCommands(dispatcher, REPLY_ALIASES);
+        removeCommands(dispatcher, VANILLA_MESSAGE_ALIASES);
+
+        for (String alias : MESSAGE_ALIASES) {
+            dispatcher.register(privateMessageCommand(alias));
+        }
+        for (String alias : REPLY_ALIASES) {
+            dispatcher.register(replyCommand(alias));
+        }
+    }
+
+    private static void removeCommands(CommandDispatcher<CommandSourceStack> dispatcher, String... names) {
+        for (String name : names) {
+            dispatcher.getRoot().getChildren().remove(name);
+        }
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> privateMessageCommand(String name) {
+        return Commands.literal(name)
                 .requires(ChibiPermissions.require(PermissionNodes.MSG))
                 .then(Commands.argument("target", EntityArgument.player())
                         .then(Commands.argument("message", StringArgumentType.greedyString())
                                 .executes(ctx -> send(ctx.getSource().getPlayerOrException(),
                                         EntityArgument.getPlayer(ctx, "target"),
-                                        StringArgumentType.getString(ctx, "message"))))));
+                                        StringArgumentType.getString(ctx, "message")))));
+    }
 
-        dispatcher.register(Commands.literal("m")
-                .requires(ChibiPermissions.require(PermissionNodes.MSG))
-                .then(Commands.argument("target", EntityArgument.player())
-                        .then(Commands.argument("message", StringArgumentType.greedyString())
-                                .executes(ctx -> send(ctx.getSource().getPlayerOrException(),
-                                        EntityArgument.getPlayer(ctx, "target"),
-                                        StringArgumentType.getString(ctx, "message"))))));
-
-        dispatcher.register(Commands.literal("reply")
+    private static LiteralArgumentBuilder<CommandSourceStack> replyCommand(String name) {
+        return Commands.literal(name)
                 .requires(ChibiPermissions.require(PermissionNodes.REPLY))
                 .then(Commands.argument("message", StringArgumentType.greedyString())
-                        .executes(ctx -> reply(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "message")))));
+                        .executes(ctx -> reply(ctx.getSource().getPlayerOrException(),
+                                StringArgumentType.getString(ctx, "message"))));
     }
 
     public static int send(ServerPlayer sender, ServerPlayer target, String message) {
@@ -45,9 +68,9 @@ public final class MessageCommands {
             return 0;
         }
 
-        Component formatted = MessageUtil.formatPrivateMessage(sender, message);
-        sender.displayClientMessage(ChibiLang.get("chibiessentials.msg.to", target.getDisplayName(), formatted), false);
-        target.displayClientMessage(ChibiLang.get("chibiessentials.msg.from", sender.getDisplayName(), formatted), false);
+        Component body = MessageUtil.formatPlayerMessage(sender, message);
+        sender.displayClientMessage(ChibiLang.get("chibiessentials.msg.to", target.getGameProfile().getName(), body), false);
+        target.displayClientMessage(ChibiLang.get("chibiessentials.msg.from", sender.getGameProfile().getName(), body), false);
 
         PlayerDataManager.getOrCreate(sender).ifPresent(d -> d.setLastMessaged(target.getUUID()));
         PlayerDataManager.getOrCreate(target).ifPresent(d -> d.setLastMessaged(sender.getUUID()));

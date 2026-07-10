@@ -13,11 +13,7 @@ public final class MessageUtil {
     private MessageUtil() {}
 
     public static Component formatPrivateMessage(ServerPlayer sender, String message) {
-        String format = ChibiConfig.messages().format;
-        String parsed = format
-                .replace("{sender}", sender.getGameProfile().getName())
-                .replace("{message}", "");
-        return insertMessage(parsed, formatPlayerMessage(sender, message));
+        return insertMessage(ChibiConfig.messages().format, formatPlayerMessage(sender, message));
     }
 
     public static Component formatPlayerMessage(ServerPlayer player, String message) {

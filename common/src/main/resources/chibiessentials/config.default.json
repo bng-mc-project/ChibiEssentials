@@ -25,7 +25,7 @@
     "requestTimeoutSeconds": 120
   },
   "messages": {
-    "format": "&7[&b{sender}&7] &f{message}"
+    "format": "&f{message}"
   },
   "chat": {
     "localRadius": 100,

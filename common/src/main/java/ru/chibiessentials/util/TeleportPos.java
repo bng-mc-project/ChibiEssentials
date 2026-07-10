@@ -99,6 +99,13 @@ public final class TeleportPos {
             };
         }
 
+        static TeleportResult warmupScheduled(int seconds) {
+            return player -> {
+                player.displayClientMessage(ChibiLang.get("chibiessentials.teleport.warmup", Math.max(1, seconds)), true);
+                return 1;
+            };
+        }
+
         int runCommand(ServerPlayer player);
 
         default boolean isSuccess() {
