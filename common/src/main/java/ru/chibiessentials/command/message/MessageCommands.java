@@ -22,14 +22,6 @@ public final class MessageCommands {
     private MessageCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        applyOverrides(dispatcher);
-    }
-
-    public static void applyOverrides(CommandDispatcher<CommandSourceStack> dispatcher) {
-        removeCommands(dispatcher, MESSAGE_ALIASES);
-        removeCommands(dispatcher, REPLY_ALIASES);
-        removeCommands(dispatcher, VANILLA_MESSAGE_ALIASES);
-
         for (String alias : MESSAGE_ALIASES) {
             dispatcher.register(privateMessageCommand(alias));
         }
@@ -38,9 +30,17 @@ public final class MessageCommands {
         }
     }
 
+    public static void applyOverrides(CommandDispatcher<CommandSourceStack> dispatcher) {
+        removeCommands(dispatcher, VANILLA_MESSAGE_ALIASES);
+        removeCommands(dispatcher, MESSAGE_ALIASES);
+        removeCommands(dispatcher, REPLY_ALIASES);
+        register(dispatcher);
+    }
+
     private static void removeCommands(CommandDispatcher<CommandSourceStack> dispatcher, String... names) {
+        var children = dispatcher.getRoot().getChildren();
         for (String name : names) {
-            dispatcher.getRoot().getChildren().remove(name);
+            children.removeIf(child -> child.getName().equals(name));
         }
     }
 
